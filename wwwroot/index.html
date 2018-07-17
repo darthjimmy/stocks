@@ -1,1 +1,37 @@
 
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+    </head>
+    <body>
+        <script>
+            
+            function login()
+            {
+                username = username.value;
+                password = password.value;
+                //Need to pass back to session to query DB to see if these exist
+            }
+
+            function newAccount()
+            {
+                //Will take to new account creation page
+            }
+        </script>
+        <div align="center">
+        <p>Welcome to the Sith Stock Calculator system!</p>
+        
+            <p>Please log in</p>
+            <label>Username: </label>
+            <input type="text" id="username" name="username">
+            <p><label>Password: </label>
+            <input type="password" id="password" name="password"></p>
+            <input type="Submit" value="Login" onclick=login()>
+        </div>
+        <div align="right"><input type="Submit" value="Create new account" onclick=newAccount()></div>
+        <div align="center"><p>Soon you too will have your very own deathstar!</p></div>
+    </body>
+</html>
+
+
