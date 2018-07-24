@@ -53,6 +53,7 @@ namespace stocks
             app.UseMvc(routes =>
             {
                 routes.MapRoute("login", "{controller=Home}/{action=Login}");
+                routes.MapRoute("addStock", "{controller=Home}/{action=AddStock}");
             });
         }
     }

@@ -11,20 +11,21 @@ namespace stocks
             "UID=eric;" +
             "password=test123;" +
             "database=stocks");
-        function logger(string username, string password, string type)
+        public static bool logger(string username, string password, string type)
         {
             using (var conn = new MySqlConnection(connstring.ToString()))
             {
                 conn.Open();
-                using (MySqlCommand cmd = conn.CreateCommand())
+                using (var cmd = conn.CreateCommand())
                 {
-            
                     if (type == "new")
                     {
                         cmd.CommandText = "SELECT username FROM user WHERE username = @username";
 
                         cmd.Parameters.AddWithValue("@username", username);
                         //reader function
+
+                        var username2 = "";
 
                         using (MySqlDataReader reader = cmd.ExecuteReader())
                         {
@@ -33,23 +34,21 @@ namespace stocks
                                 username2 = reader.GetString("username");
                             }
                         }
-                            if (username2 == "")
-                            {
-                                cmd.CommandText = "INSERT INTO user (username, password) VALUES (@username, @password)";
-                                cmd.Parameters.AddWithValue("@password", password);
 
-                                if (cmd.ExecuteNonQuery() > 0) return true;
-                                return false;
-                            }
+                        if (username2 == "")
+                        {
+                            cmd.CommandText = "INSERT INTO user (username, password) VALUES (@username, @password)";
+                            cmd.Parameters.AddWithValue("@password", password);
+
+                            if (cmd.ExecuteNonQuery() > 0) return true;
                             return false;
-                        
+                        }
+                        return false;
                     }
-
-                    if (type == "login")
+                    else if (type == "login")
                     {
-                        string conn = "SELECT username FROM user WHERE username = @username";
-
                         //reader function
+                        var username2 = "";
 
                         cmd.CommandText = "SELECT username FROM user WHERE username = @username";
 
@@ -71,6 +70,8 @@ namespace stocks
                     }
                 }
             }
+            
+            return false;
         }
     }
 }

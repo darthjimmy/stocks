@@ -29,5 +29,11 @@ namespace stocks.Controllers
             if (loggedIn == true) return true;
             return false;
         }
+
+        [HttpPost]
+        public bool AddStock(string ticker)
+        {
+            return false;
+        }
     }
 }
