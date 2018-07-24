@@ -8,14 +8,14 @@
         <script>
             var username = sessionStorage.getItem("username");
             var password = sessionStorage.getItem("password");
-            var creater = "login";
+            var typer = "login";
             //call backend to make sure this username and password exists. 
             //if (!backend()) 
             $.ajax({
                     url: "/login",
                     type: "POST", 
                     dataType: 'html', 
-                    data: { username: username, password: password, creater: creater}, 
+                    data: { username: username, password: password, type: typer}, 
                     success: function(result)
                     { 
                         if (result == false)
