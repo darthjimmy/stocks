@@ -23,9 +23,9 @@ namespace stocks.Controllers
         }
 
         [HttpPost]
-        public IActionResult Login(string user, string password)
+        public bool Login(string user, string password)
         {
-            return View();
+            return false;
         }
     }
 }
