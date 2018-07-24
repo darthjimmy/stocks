@@ -18,7 +18,7 @@ namespace stocks
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
                 {
-                    if (type == "new")
+                    if (type == "creation")
                     {
                         cmd.CommandText = "SELECT username FROM user WHERE username = @username";
 
