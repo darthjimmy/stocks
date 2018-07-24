@@ -58,7 +58,10 @@ namespace stocks
                     template: "/login",
                     defaults: new { controller = "Home", action = "Login" }
                 );
-                routes.MapRoute("addStock", "{controller=Home}/{action=AddStock}");
+                routes.MapRoute(
+                    name: "try_addStock",
+                    template: "/addstock",
+                    defaults: new { controller = "Home", action = "AddStock" });
             });
         }
     }
