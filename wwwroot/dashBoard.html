@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="styler.css">
+    </head>
+    <body>
+        <script>
+            var username = sessionStorage.getItem("username");
+            var password = sessionStorage.getItem("password");
+            var creater = "login";
+            //call backend to make sure this username and password exists. 
+            //if (!backend()) 
+            $.ajax({
+                    url: "/login",
+                    type: "POST", 
+                    dataType: 'html', 
+                    data: { username: username, password: password, creater: creater}, 
+                    success: function(result)
+                    { 
+                        if (result == false)
+                        {
+                            window.location.href="index.html";
+                        }
+                    },
+                    error: function()
+                    {
+                        window.location.href="index.html";   
+                    }
+                });
+           // {
+           //     
+            //}
+            function logout()
+            {
+                //Set session to cleared.
+                sessionStorage.clear();
+                window.location.href="index.html";
+            }
+        </script>
+        <div align="top" id="banner"><p align="right"><input type="Submit" id="logout" name="logout" value="Logout" onclick=logout()></p></div>
+        <div align="center"><p>Welcome! Please review your stock options.</p></div>
+
+
+    </body>
+</html>
