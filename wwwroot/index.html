@@ -7,7 +7,10 @@
     <body>
         <script>
             
-            
+            function dashBoard()
+            {
+                window.location.href = "dashBoard.html";   
+            }
 
             function newAccount()
             {
@@ -32,7 +35,7 @@
                         {
                             sessionStorage.setItem("username", usernamer);
                             sessionStorage.setItem("password", passworder);          
-                            window.location.href("dashboard.html");
+                            window.location.href ="dashboard.html";
                         }
                         else
                         {
