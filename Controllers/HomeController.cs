@@ -23,8 +23,10 @@ namespace stocks.Controllers
         }
 
         [HttpPost]
-        public bool Login(string user, string password)
+        public bool Login(string user, string password, string type)
         {
+            bool loggedIn = DBHelper.logger(username, password, type);
+            if (loggedIn == true) return true;
             return false;
         }
     }
