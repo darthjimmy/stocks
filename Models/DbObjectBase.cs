@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 namespace stocks
 {
     public abstract class DbObjectBase
@@ -20,7 +22,7 @@ namespace stocks
 
         public abstract string SelectQuery { get; }
 
-        public abstract string ConnectionString 
+        public string ConnectionString 
         {
             get
             {
@@ -32,15 +34,15 @@ namespace stocks
         /// Save the object to the database
         /// </summary>
         /// <returns></returns>
-        public async Task Commit()
-        {
-            using (var mySqlConnection = new MySqlConnection(ConnectionString))
-            {
-                using (var command = new MySqlCommand(UpdateQuery()))
-                {
+        // public async Task Commit()
+        // {
+        //     using (var mySqlConnection = new MySqlConnection(ConnectionString))
+        //     {
+        //         using (var command = new MySqlCommand(UpdateQuery()))
+        //         {
                     
-                }
-            }
-        }
+        //         }
+        //     }
+        // }
     }
 }
