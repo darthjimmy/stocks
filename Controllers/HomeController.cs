@@ -8,7 +8,6 @@ using stocks.Models;
 
 namespace stocks.Controllers
 {
-    [Route("Home")]
     public class HomeController : Controller
     {
         public IActionResult Index()

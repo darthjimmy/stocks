@@ -26,6 +26,7 @@ namespace stocks
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddRouting();
             services.AddMvc();
         }
 
@@ -52,7 +53,11 @@ namespace stocks
 
             app.UseMvc(routes =>
             {
-                routes.MapRoute("login", "{controller=Home}/{action=Login}");
+                routes.MapRoute(
+                    name: "try_login", 
+                    template: "/login",
+                    defaults: new { controller = "Home", action = "Login" }
+                );
                 routes.MapRoute("addStock", "{controller=Home}/{action=AddStock}");
             });
         }

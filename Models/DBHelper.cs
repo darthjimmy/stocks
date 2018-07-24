@@ -8,9 +8,9 @@ namespace stocks
     {
         static private MySqlConnectionStringBuilder connstring = new MySqlConnectionStringBuilder("" +
             "Server=cs4450.cj7o28wmyp47.us-east-2.rds.amazonaws.com;" +
-            "UID=eric;" +
-            "password=test123;" +
-            "database=stocks");
+            "UID=erics;" +
+            "password=password;" +
+            "database=Stock");
         public static bool logger(string username, string password, string type)
         {
             using (var conn = new MySqlConnection(connstring.ToString()))
