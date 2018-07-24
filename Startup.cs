@@ -50,7 +50,10 @@ namespace stocks
             });
             app.UseCookiePolicy();
 
-            app.UseMvcWithDefaultRoute();
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute("login", "{controller=Home}/{action=Login}");
+            });
         }
     }
 }

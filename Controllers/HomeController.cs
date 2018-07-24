@@ -8,6 +8,7 @@ using stocks.Models;
 
 namespace stocks.Controllers
 {
+    [Route("Home")]
     public class HomeController : Controller
     {
         public IActionResult Index()
@@ -19,6 +20,12 @@ namespace stocks.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        [HttpPost]
+        public IActionResult Login(string user, string password)
+        {
+
         }
     }
 }
