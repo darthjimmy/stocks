@@ -20,12 +20,12 @@
                 hash.update(password.value);
                 var usernamer = username.value;
                 var passworder = hash.hex();
-                var creater = "login";
+                var typer = "login";
                 $.ajax({
                     url: "/login",
                     type: "POST", 
                     dataType: 'html', 
-                    data: { username: usernamer, password: passworder, creater: creater}, 
+                    data: { username: usernamer, password: passworder, type: typer}, 
                     success: function(result)
                     { 
                         if (result == true)
