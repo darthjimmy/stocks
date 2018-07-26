@@ -37,7 +37,7 @@ namespace stocks
 
                         if (username2 == "")
                         {
-                            cmd.CommandText = "INSERT INTO user (username, password) VALUES (@username, @password)";
+                            cmd.CommandText = "INSERT INTO user (username, password, balance) VALUES (@username, @password, 0)";
                             cmd.Parameters.AddWithValue("@password", password);
 
                             if (cmd.ExecuteNonQuery() > 0) return true;
@@ -72,6 +72,26 @@ namespace stocks
             }
             
             return false;
+        }
+        
+        public static bool AddBalance(double amount, string username)
+        {
+            using (var conn = new MySqlConnection(connstring.ToString()))
+            {
+                conn.Open();
+                using (MySqlCommand cmd = conn.CreateCommand())
+                {
+                    
+                    cmd.CommandText = "UPDATE user SET balance = @amount WHERE username = username@";
+
+                    cmd.Parameters.AddWithValue("@username", username);
+                    cmd.Parameters.AddWithValue("@amount", amount);
+
+                    if (cmd.ExecuteNonQuery() > 0) return true;
+                        return false;
+                    
+                }
+            }
         }
     }
 }
