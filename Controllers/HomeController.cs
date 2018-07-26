@@ -46,5 +46,17 @@ namespace stocks.Controllers
             StockDataClient client = new StockDataClient();
             return (client.GetMostActive().Result);
         }
+        
+        [HttpPost]
+        public bool AddBalance(decimal amount, string username)
+        {
+            return DBHelper.AddBalance(amount, username);
+        }
+        
+        [HttpPost]
+        public decimal GetBalance(string username)
+        {
+            return DBHelper.GetBalance(username);
+        }
     }
 }

@@ -73,6 +73,16 @@ namespace stocks
                     template: "/getMostActive",
                     defaults: new { controller = "Home", action = "MostActive" }
                 );
+                routes.MapRoute(
+                    name: "try_getBalance", 
+                    template: "/getBalance",
+                    defaults: new { controller = "Home", action = "GetBalance" }
+                );
+                routes.MapRoute(
+                    name: "try_addBalance", 
+                    template: "/addBalance",
+                    defaults: new { controller = "Home", action = "AddBalance" }
+                );
             });
         }
     }
