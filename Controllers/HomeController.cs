@@ -38,5 +38,11 @@ namespace stocks.Controllers
         {
             return DBHelper.AddBalance(amount, username);
         }
+        
+        [HttpPost]
+        public double GetBalance(string username)
+        {
+            return DBHelper.GetBalance(username);
+        }
     }
 }
