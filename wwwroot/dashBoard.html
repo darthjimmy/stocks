@@ -32,12 +32,14 @@
             
                 
                 $.ajax({
-                        url: "/login",
+                        url: "/getBalance",
                         type: "POST", 
                         dataType: 'html', 
                         data: { username: username}, 
                         success: function(result)
-                        { 
+                        {
+                            alert(result);
+                            
                             curBalance.value = result;
                         },
                         error: function()
