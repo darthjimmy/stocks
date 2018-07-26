@@ -75,9 +75,9 @@ namespace stocks
             return false;
         }
         
-        public static double GetBalance(string username)
+        public static decimal GetBalance(string username)
         {
-            double amount = 0;
+            decimal amount = 0;
             using (var conn = new MySqlConnection(connstring.ToString()))
             {
                 conn.Open();
@@ -92,7 +92,7 @@ namespace stocks
                     {
                         while (reader.Read())
                         {
-                            amount = reader.GetDouble("balance");
+                            amount = reader.GetDecimal("balance");
                         }
                     }
 
@@ -102,7 +102,7 @@ namespace stocks
             }
         }
         
-        public static bool AddBalance(double amount, string username)
+        public static bool AddBalance(decimal amount, string username)
         {
             using (var conn = new MySqlConnection(connstring.ToString()))
             {
