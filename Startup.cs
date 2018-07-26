@@ -70,7 +70,7 @@ namespace stocks
                 routes.MapRoute(
                     name: "try_addBalance", 
                     template: "/addBalance",
-                    defaults: new { controller = "Home", action = "addBalance" }
+                    defaults: new { controller = "Home", action = "AddBalance" }
                 );
             });
         }
