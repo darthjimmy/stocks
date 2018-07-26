@@ -11,6 +11,7 @@ namespace stocks
             "UID=erics;" +
             "password=password;" +
             "database=Stock");
+        
         public static bool logger(string username, string password, string type)
         {
             using (var conn = new MySqlConnection(connstring.ToString()))
@@ -72,6 +73,34 @@ namespace stocks
             }
             
             return false;
+        }
+        
+        public static double GetBalance(string username)
+        {
+            double amount = 0;
+            using (var conn = new MySqlConnection(connstring.ToString()))
+            {
+                conn.Open();
+                using (MySqlCommand cmd = conn.CreateCommand())
+                {
+                    
+                    cmd.CommandText = "SELECT balance FROM user WHERE username = username@";
+
+                    cmd.Parameters.AddWithValue("@username", username);
+
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            amount = reader.GetDouble("balance");
+                        }
+                    }
+
+                    return amount;
+                    
+                }
+            }
+            return;
         }
         
         public static bool AddBalance(double amount, string username)
