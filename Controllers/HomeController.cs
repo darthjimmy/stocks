@@ -34,13 +34,13 @@ namespace stocks.Controllers
         }
         
         [HttpPost]
-        public bool AddBalance(double amount, string username)
+        public bool AddBalance(decimal amount, string username)
         {
             return DBHelper.AddBalance(amount, username);
         }
         
         [HttpPost]
-        public double GetBalance(string username)
+        public decimal GetBalance(string username)
         {
             return DBHelper.GetBalance(username);
         }
