@@ -34,9 +34,9 @@ namespace stocks.Controllers
         }
         
         [HttpPost]
-        public bool AddBalance(double amount)
+        public bool AddBalance(double amount, string username)
         {
-            return DBHelper.AddBalance(amount);
+            return DBHelper.AddBalance(amount, username);
         }
     }
 }
