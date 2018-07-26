@@ -100,7 +100,6 @@ namespace stocks
                     
                 }
             }
-            return amount;
         }
         
         public static bool AddBalance(double amount, string username)
