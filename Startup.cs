@@ -61,7 +61,18 @@ namespace stocks
                 routes.MapRoute(
                     name: "try_addStock",
                     template: "/addstock",
-                    defaults: new { controller = "Home", action = "AddStock" });
+                    defaults: new { controller = "Home", action = "AddStock" }
+                );
+                routes.MapRoute(
+                    name: "try_getPrice",
+                    template: "/getPrice",
+                    defaults: new { controller = "Home", action = "GetPrice" }
+                );
+                routes.MapRoute(
+                    name: "try_getActive",
+                    template: "/getMostActive",
+                    defaults: new { controller = "Home", action = "MostActive" }
+                );
             });
         }
     }

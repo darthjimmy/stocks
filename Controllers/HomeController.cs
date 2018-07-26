@@ -32,5 +32,19 @@ namespace stocks.Controllers
         {
             return false;
         }
+
+        [HttpPost]
+        public decimal GetPrice(string ticker)
+        {
+            StockDataClient client = new StockDataClient();
+            return (client.GetDelayedQuote(ticker).Result)?.DelayedPrice ?? 0.0m;
+        }
+
+        [HttpPost]
+        public string MostActive()
+        {
+            StockDataClient client = new StockDataClient();
+            return (client.GetMostActive().Result);
+        }
     }
 }
