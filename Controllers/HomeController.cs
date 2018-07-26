@@ -32,5 +32,11 @@ namespace stocks.Controllers
         {
             return false;
         }
+        
+        [HttpPost]
+        public bool AddBalance(double amount)
+        {
+            return DBHelper.AddBalance(amount);
+        }
     }
 }
