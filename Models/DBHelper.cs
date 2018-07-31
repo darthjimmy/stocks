@@ -121,7 +121,7 @@ namespace stocks
                         }
                     }
 
-                    cmd.CommandText = "SELECT COUNT(*) AS 'counter' FROM stocks WHERE userID = @userID";
+                    cmd.CommandText = "SELECT COUNT(*) AS 'counter' FROM userInvestments WHERE userID = @userID";
 
                     cmd.Parameters.AddWithValue("@userID", userID);
 
