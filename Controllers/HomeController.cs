@@ -39,6 +39,12 @@ namespace stocks.Controllers
             StockDataClient client = new StockDataClient();
             return (client.GetDelayedQuote(ticker).Result)?.DelayedPrice ?? 0.0m;
         }
+        
+        [HttpPost]
+        public decimal PurchaseStock(string username, string ticker, int shares)
+        {
+            return DBHelper.PurchaseStock(username, ticker, shares);
+        }
 
         [HttpPost]
         public string MostActive()
