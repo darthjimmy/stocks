@@ -60,6 +60,12 @@ namespace stocks.Controllers
         }
         
         [HttpPost]
+        public bool DoStocks(string username)
+        {
+            return DBHelper.DoStocks(username);
+        }
+        
+        [HttpPost]
         public decimal GetBalance(string username)
         {
             return DBHelper.GetBalance(username);
