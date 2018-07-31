@@ -23,6 +23,10 @@
                         {
                             window.location.href="index.html";
                         }
+                        else
+                        {
+                            getBalance();
+                        }
                     },
                     error: function()
                     {
@@ -30,7 +34,8 @@
                     }
                 });
             
-                
+            function getBalance()
+            {
                 $.ajax({
                         url: "/getBalance",
                         type: "POST", 
@@ -45,7 +50,7 @@
                             alert("Failed to obtain balance");   
                         }
                     });
-
+            }
             function addBalance()
             {
                 var amount = amounter.value;
@@ -56,7 +61,7 @@
                         data: { username: username, amount: amount }, 
                         success: function(result)
                         { 
-
+                            getBalance();
                         },
                         error: function()
                         {
