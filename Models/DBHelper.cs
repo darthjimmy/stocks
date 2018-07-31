@@ -102,6 +102,45 @@ namespace stocks
             }
         }
         
+        public static bool DoStocks(string username)
+        {
+            int amount = 0;
+            int userID = -1;
+            using (var conn = new MySqlConnection(connstring.ToString()))
+            {
+                conn.Open();
+                using (MySqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT userID FROM user WHERE username = @username";
+                    cmd.Paramenters.AddWithValue("@username", username);
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            userID = reader.GetInt32("userID");
+                        }
+                    }
+
+                    cmd.CommandText = "SELECT COUNT(*) AS 'counter' FROM stocks WHERE userID = @userID";
+
+                    cmd.Parameters.AddWithValue("@userID", userID);
+
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            amount = reader.GetInt32("counter");
+                        }
+                    }
+
+                    if (amount > 3) return true;
+                    return false;
+
+
+                }
+            }
+        }
+        
         public static bool PurchaseStock(string username, string ticker, int shares)
         {
             decimal balance = GetBalance(username);
