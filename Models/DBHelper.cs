@@ -84,7 +84,7 @@ namespace stocks
                 using (MySqlCommand cmd = conn.CreateCommand())
                 {
                     
-                    cmd.CommandText = "SELECT balance FROM user WHERE username = username@";
+                    cmd.CommandText = "SELECT balance FROM user WHERE username = @username";
 
                     cmd.Parameters.AddWithValue("@username", username);
 
@@ -110,7 +110,7 @@ namespace stocks
                 using (MySqlCommand cmd = conn.CreateCommand())
                 {
                     
-                    cmd.CommandText = "UPDATE user SET balance = @amount WHERE username = username@";
+                    cmd.CommandText = "UPDATE user SET balance = @amount WHERE username = @username";
 
                     cmd.Parameters.AddWithValue("@username", username);
                     cmd.Parameters.AddWithValue("@amount", amount);
