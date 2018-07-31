@@ -86,7 +86,7 @@ namespace stocks
                 routes.MapRoute(
                     name: "try_stocks", 
                     template: "/stocks",
-                    defaults: new { controller = "Home", action = "doStocks" }
+                    defaults: new { controller = "Home", action = "DoStocks" }
                 );
             });
         }
