@@ -112,7 +112,7 @@ namespace stocks
                 using (MySqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = "SELECT userID FROM user WHERE username = @username";
-                    cmd.Paramenters.AddWithValue("@username", username);
+                    cmd.Parameters.AddWithValue("@username", username);
                     using (MySqlDataReader reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
@@ -153,7 +153,7 @@ namespace stocks
             {
                 return false;
             }
-            decimal differance = balance - cost;
+            decimal difference = balance - cost;
             using (var conn = new MySqlConnection(connstring.ToString()))
             {
                 conn.Open();
