@@ -113,11 +113,11 @@ namespace stocks
                 {
                     cmd.CommandText = "SELECT userID FROM user WHERE username = @username";
                     cmd.Parameters.AddWithValue("@username", username);
-                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    using (MySqlDataReader reader1 = cmd.ExecuteReader())
                     {
-                        while (reader.Read())
+                        while (reader1.Read())
                         {
-                            userID = reader.GetInt32("userID");
+                            userID = reader1.GetInt32("userID");
                         }
                     }
 
@@ -170,11 +170,11 @@ namespace stocks
                     cmd.CommandText = "SELECT stockID FROM stocks WHERE ticker = @ticker";
                     cmd.Parameters.AddWithValue("@ticker", ticker);
 
-                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    using (MySqlDataReader reader1 = cmd.ExecuteReader())
                     {
-                        while (reader.Read())
+                        while (reader1.Read())
                         {
-                            stockID = reader.GetInt32("stockID");
+                            stockID = reader1.GetInt32("stockID");
                         }
                     }
 
