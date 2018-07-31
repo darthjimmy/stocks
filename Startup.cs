@@ -83,6 +83,11 @@ namespace stocks
                     template: "/addBalance",
                     defaults: new { controller = "Home", action = "AddBalance" }
                 );
+                routes.MapRoute(
+                    name: "try_stocks", 
+                    template: "/stocks",
+                    defaults: new { controller = "Home", action = "doStocks" }
+                );
             });
         }
     }
