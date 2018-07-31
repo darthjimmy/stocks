@@ -41,7 +41,7 @@ namespace stocks.Controllers
         }
         
         [HttpPost]
-        public decimal PurchaseStock(string username, string ticker, int shares)
+        public bool PurchaseStock(string username, string ticker, int shares)
         {
             return DBHelper.PurchaseStock(username, ticker, shares);
         }
