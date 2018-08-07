@@ -75,6 +75,32 @@ namespace stocks
             return false;
         }
         
+        public static int GetUserId(string username)
+        {
+            int userID = -1;
+
+            using (var conn = new MySqlConnection(connstring.ToString()))
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT userID FROM user WHERE username = @username";
+
+                    cmd.Parameters.AddWithValue("@username", username);
+                    
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            userID = reader.GetInt32("userID");
+                        }
+                    }
+                }
+            }
+
+            return userID;
+        }
+
         public static decimal GetBalance(string username)
         {
             decimal amount = 0;
@@ -204,7 +230,10 @@ namespace stocks
                     {
                         cmd.CommandText = "UPDATE userInvestmentsID SET shares = @shares WHERE userID = @userID AND stockID = @stockID";
                     }
+                    
                     cmd.Parameters.AddWithValue("@shares", shares);
+                    cmd.Parameters.AddWithValue("@userID", GetUserId(username));
+                    cmd.Parameters.AddWithValue("@stockID", stockID);
 
                     if (cmd.ExecuteNonQuery() > 0) return true;
                 }
