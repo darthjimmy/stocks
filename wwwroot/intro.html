@@ -140,6 +140,28 @@
                 });
                 window.pieChartCanvas = pieChart
             }
+            
+            function stocker()
+            {
+                var first = document.GetElementById("first");   
+                var second = document.GetElementById("second");  
+                var third = document.GetElementById("third"); 
+                
+                $.ajax({
+                        url: "/addStockF",
+                        type: "POST", 
+                        dataType: 'html', 
+                        data: { firstStock: first, secondStock: second, thirdStock: third }, 
+                        success: function(result)
+                        { 
+                            getBalance();
+                        },
+                        error: function()
+                        {
+                            alert("Failed to purchase stock");   
+                        }
+                    });
+            }
         </script>
         <div align="top" id="banner"><p align="right"><input type="Submit" id="logout" name="logout" value="Logout" onclick=logout()></p></div>
         <div align="center"><p>Welcome! Please review your stock options.</p></div>
@@ -147,6 +169,11 @@
         <p><input type="Submit" value="Submit" onclick=addBalance()></p></div>
         <div align="center">Current account balance</div>
         <div align="center"><input type="text" readonly="readonly" id="curBalance"></div>
+        
+        <div align="left"><input type="text" id="first"></div>
+        <div align="center"><input type="text" id="second"></div>
+        <div align="right"><input type="text" id="second"></div>
+        <div align="center"><input type="Submit" onclick="stocker"></div>
         
         <div id="table"></div>
         <div id="pieChartDiv">
