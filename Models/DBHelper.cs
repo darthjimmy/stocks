@@ -282,9 +282,9 @@ namespace stocks
                 conn.Open();
                 using (MySqlCommand cmd = conn.CreateCommand())
                 {
-                    
+                    decimal balance = GetBalance(username);
+                    amount = amount + balance;
                     cmd.CommandText = "UPDATE user SET balance = @amount WHERE username = @username";
-
                     cmd.Parameters.AddWithValue("@username", username);
                     cmd.Parameters.AddWithValue("@amount", amount);
 
