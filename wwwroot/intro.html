@@ -148,17 +148,18 @@
                 var third = document.GetElementById("third"); 
                 
                 $.ajax({
-                        url: "/addStockF",
+                        url: "/findStockF",
                         type: "POST", 
                         dataType: 'html', 
                         data: { firstStock: first, secondStock: second, thirdStock: third }, 
                         success: function(result)
                         { 
                             getBalance();
+                            //Will give option to purchase stock later
                         },
                         error: function()
                         {
-                            alert("Failed to purchase stock");   
+                            alert("Failed to find stock");   
                         }
                     });
             }
