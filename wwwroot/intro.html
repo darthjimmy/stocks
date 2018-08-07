@@ -158,10 +158,10 @@
                             }
                             else
                             {
-                                document.getElementById("first").innerHTML = result;
-                                firstB.style.visibility='hidden';
-                                secondB.style.visibility='visible';
-                                second.style.visibility='visible';
+                                document.getElementById("firstL").innerHTML = result;
+                                document.getElementById("first").hidden = true;
+                                document.getElementById("secondB").hidden = false;
+                                document.getElementById("second").hidden = false;
                             }
                         },
                         error: function()
@@ -173,9 +173,10 @@
             
             function canceler()
             {
-                firstB.style.visibility='visible';
-                secondB.style.visibility='hidden';
-                second.style.visibility='hidden';
+                document.getElementById("firstL").innerHTML = "";
+                document.getElementById("first").hidden = false;
+                document.getElementById("secondB").hidden = true;
+                document.getElementById("second").hidden = true;
             }
         </script>
         <div align="top" id="banner"><p align="right"><input type="Submit" id="logout" name="logout" value="Logout" onclick=logout()></p></div>
@@ -187,7 +188,7 @@
         
         <div align="left"><p>Please input your stock tickers, you must do this 3 times.</p>
         <p><input type="text" id="first"><label id="firstL"></label><div id="second" hidden=true><input type="text" id="secondT"></div></p></div>
-        <p><div align="left" visible=visible id="firstB"><input type="Submit" onclick=stocker() value="Find Stock"></div>
+        <p><div align="left" hidden=false id="firstB"><input type="Submit" onclick=stocker() value="Find Stock"></div>
         <div align="left" hidden=true id="secondB"><input type="Submit" onclick=buyer() value="Purchase"></div></p>
         <input type="Submit" value="Cancel" onclick=canceler()>
         
