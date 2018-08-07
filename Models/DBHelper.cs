@@ -201,19 +201,17 @@ namespace stocks
 
                         cmd.ExecuteNonQuery();
                     }
-                }
+                
+                    stockID = InsertStock(ticker);
+                    if (stockID == -1)
+                    {
+                        // Something went horribly wrong here and didn't throw an error
+                        return false;
+                    }
 
-                stockID = InsertStock(ticker);
-                if (stockID == -1)
-                {
-                    // Something went horribly wrong here and didn't throw an error
-                    return false;
-                }
-
-                using (MySqlCommand cmd = conn.CreateCommand())
-                {
-                    cmd.CommandText = "SELECT userInvestmentsID, shares FROM userInvestments WHERE stockID = @stockID";
+                    cmd.CommandText = "SELECT userInvestmentsID, shares FROM userInvestments WHERE stockID = @stockID AND userID = @userID";
                     cmd.Parameters.AddWithValue("@stockID", stockID);
+                    cmd.Parameters.AddWithValue("@userID", GetUserId(username));
 
                     using (MySqlDataReader reader = cmd.ExecuteReader())
                     {
@@ -223,12 +221,9 @@ namespace stocks
                             newShares = reader.GetInt32("shares");
                         }
                     }
-                }
-                    
-                shares = shares + newShares;
 
-                using (MySqlCommand cmd = conn.CreateCommand())
-                {
+                    shares = shares + newShares;
+
                     if (userInvestmentsID == -1)
                     {
                         cmd.CommandText = "INSERT INTO userInvestments (userID, stockID, shares) VALUES (@userID, @stockID, @shares)";
@@ -239,8 +234,6 @@ namespace stocks
                     }
 
                     cmd.Parameters.AddWithValue("@shares", shares);
-                    cmd.Parameters.AddWithValue("@userID", GetUserId(username));
-                    cmd.Parameters.AddWithValue("@stockID", stockID);
 
                     if (cmd.ExecuteNonQuery() > 0) return true;
                 }
@@ -320,15 +313,11 @@ namespace stocks
                             stockID = reader1.GetInt32("stockID");
                         }
                     }
-                }
 
-                if (stockID == -1)
-                {
-                    using (MySqlCommand cmd = conn.CreateCommand())
+                    if (stockID == -1)
                     {
                         // we need to create it
                         cmd.CommandText = "INSERT INTO stocks (ticker) VALUES (@ticker);";
-                        cmd.Parameters.AddWithValue("@ticker", ticker);
                         cmd.ExecuteNonQuery();
 
                         stockID = cmd.LastInsertedId;
