@@ -28,9 +28,21 @@ namespace stocks.Controllers
         }
 
         [HttpPost]
-        public bool AddStock(string ticker)
+        public string AddStock(string ticker, string username)
         {
-            return false;
+            StockDataClient client = new StockDataClient();
+
+            var result = client.GetDelayedQuote(ticker).Result;
+
+            if (result != null)
+            {
+                if (DBHelper.PurchaseStock(username, ticker, 0))
+                    return $"{result.Symbol}, {result.DelayedPrice}";
+                else
+                    return "false";
+            }
+
+            return "false";
         }
 
         [HttpPost]

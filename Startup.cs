@@ -60,7 +60,7 @@ namespace stocks
                 );
                 routes.MapRoute(
                     name: "try_addStock",
-                    template: "/addstock",
+                    template: "/addStock",
                     defaults: new { controller = "Home", action = "AddStock" }
                 );
                 routes.MapRoute(

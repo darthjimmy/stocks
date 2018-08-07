@@ -143,39 +143,44 @@ namespace stocks
         
         public static bool PurchaseStock(string username, string ticker, int shares)
         {
-            decimal balance = GetBalance(username);
-            decimal cost = StockPrice(ticker);
             int newShares = 0;
             int stockID = -1;
             int userInvestmentsID = -1;
-            cost = cost * shares;
-            if (balance < cost)
+            decimal difference = 0;
+
+            if (shares > 0)
             {
-                return false;
+                decimal balance = GetBalance(username);
+                decimal cost = StockPrice(ticker);
+
+                cost = cost * shares;
+                if (balance < cost)
+                {
+                    return false;
+                }
+                difference = balance - cost;
             }
-            decimal difference = balance - cost;
+
             using (var conn = new MySqlConnection(connstring.ToString()))
             {
                 conn.Open();
                 using (MySqlCommand cmd = conn.CreateCommand())
                 {
-
-                    cmd.CommandText = "UPDATE user SET balance = @difference WHERE username = @username";
-
-                    cmd.Parameters.AddWithValue("@username", username);
-                    cmd.Parameters.AddWithValue("@difference", difference);
-
-                    cmd.ExecuteNonQuery();
-
-                    cmd.CommandText = "SELECT stockID FROM stocks WHERE ticker = @ticker";
-                    cmd.Parameters.AddWithValue("@ticker", ticker);
-
-                    using (MySqlDataReader reader1 = cmd.ExecuteReader())
+                    if (shares > 0)
                     {
-                        while (reader1.Read())
-                        {
-                            stockID = reader1.GetInt32("stockID");
-                        }
+                        cmd.CommandText = "UPDATE user SET balance = @difference WHERE username = @username";
+
+                        cmd.Parameters.AddWithValue("@username", username);
+                        cmd.Parameters.AddWithValue("@difference", difference);
+
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    stockID = InsertStock(ticker);
+                    if (stockID == -1)
+                    {
+                        // Something went horribly wrong here and didn't throw an error
+                        return false;
                     }
 
                     cmd.CommandText = "SELECT userInvestmentsID, shares FROM userInvestments WHERE stockID = @stockID";
@@ -252,6 +257,58 @@ namespace stocks
                     
                 }
             }
+        }
+
+        /// <summary>
+        /// Checks if a stock exists, otherwise inserts it
+        /// </summary>
+        /// <param name="ticker"></param>
+        /// <returns></returns>
+        public static int InsertStock(string ticker)
+        {
+            int stockID = -1;
+
+            using (var conn = new MySqlConnection(connstring.ToString()))
+            {
+                conn.Open();
+                using (MySqlCommand cmd = conn.CreateCommand())
+                {
+                    // check if our stock is already there
+                    cmd.CommandText = "SELECT stockID FROM stocks WHERE ticker = @ticker";
+                    cmd.Parameters.AddWithValue("@ticker", ticker);
+
+                    using (MySqlDataReader reader1 = cmd.ExecuteReader())
+                    {
+                        while (reader1.Read())
+                        {
+                            stockID = reader1.GetInt32("stockID");
+                        }
+                    }
+                }
+
+                if (stockID == -1)
+                {
+                    using (MySqlCommand cmd = conn.CreateCommand())
+                    {
+                        // we need to create it
+                        cmd.CommandText = "INSERT INTO stocks (ticker) VALUES (@ticker);";
+                        cmd.Parameters.AddWithValue("@ticker", ticker);
+                        cmd.ExecuteNonQuery();
+
+                        cmd.CommandText = "SELECT LAST_INSERT_ID();";
+
+                        using (MySqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                stockID = reader.GetInt32("stockID");
+                            }
+                        }
+                    }
+                }
+            }
+
+            return stockID;
         }
     }
 }
