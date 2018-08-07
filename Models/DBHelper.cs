@@ -201,14 +201,17 @@ namespace stocks
 
                         cmd.ExecuteNonQuery();
                     }
+                }
 
-                    stockID = InsertStock(ticker);
-                    if (stockID == -1)
-                    {
-                        // Something went horribly wrong here and didn't throw an error
-                        return false;
-                    }
+                stockID = InsertStock(ticker);
+                if (stockID == -1)
+                {
+                    // Something went horribly wrong here and didn't throw an error
+                    return false;
+                }
 
+                using (MySqlCommand cmd = conn.CreateCommand())
+                {
                     cmd.CommandText = "SELECT userInvestmentsID, shares FROM userInvestments WHERE stockID = @stockID";
                     cmd.Parameters.AddWithValue("@stockID", stockID);
 
@@ -220,8 +223,12 @@ namespace stocks
                             newShares = reader.GetInt32("shares");
                         }
                     }
+                }
+                    
+                shares = shares + newShares;
 
-                    shares = shares + newShares;
+                using (MySqlCommand cmd = conn.CreateCommand())
+                {
                     if (userInvestmentsID == -1)
                     {
                         cmd.CommandText = "INSERT INTO userInvestmentsID (userID, stockID, shares) VALUES (@userID, @stockID, @shares)";
@@ -230,7 +237,7 @@ namespace stocks
                     {
                         cmd.CommandText = "UPDATE userInvestmentsID SET shares = @shares WHERE userID = @userID AND stockID = @stockID";
                     }
-                    
+
                     cmd.Parameters.AddWithValue("@shares", shares);
                     cmd.Parameters.AddWithValue("@userID", GetUserId(username));
                     cmd.Parameters.AddWithValue("@stockID", stockID);
