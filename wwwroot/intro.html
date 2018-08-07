@@ -24,6 +24,10 @@
                     {
                         window.location.href="index.html";
                     }
+                    else
+                    {
+                        getBalance();   
+                    }
                 },
                 error: function()
                 {
@@ -55,6 +59,42 @@
                 }
             });
 
+            function getBalance()
+            {
+                $.ajax({
+                        url: "/getBalance",
+                        type: "POST", 
+                        dataType: 'html', 
+                        data: { username: username}, 
+                        success: function(result)
+                        {
+                            curBalance.value = result;
+                        },
+                        error: function()
+                        {
+                            alert("Failed to obtain balance");   
+                        }
+                    });
+            }
+            function addBalance()
+            {
+                var amount = amounter.value;
+                $.ajax({
+                        url: "/addBalance",
+                        type: "POST", 
+                        dataType: 'html', 
+                        data: { username: username, amount: amount }, 
+                        success: function(result)
+                        { 
+                            getBalance();
+                        },
+                        error: function()
+                        {
+                            alert("Failed to add balance");   
+                        }
+                    });
+            }
+            
             function logout()
             {
                 //Set session to cleared.
@@ -64,6 +104,10 @@
         </script>
         <div align="top" id="banner"><p align="right"><input type="Submit" id="logout" name="logout" value="Logout" onclick=logout()></p></div>
         <div align="center"><p>Welcome! Please review your stock options.</p></div>
+        <div align="center"><p><label>Amount to add to your current account balance: </label><input type="text" id="amounter" name="amounter"></p>
+        <p><input type="Submit" value="Submit" onclick=addBalance()></p></div>
+        <div align="center">Current account balance</div>
+        <div align="center"><input type="text" readonly="readonly" id="curBalance"></div>
     </body>
 </html>
 
