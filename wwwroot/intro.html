@@ -144,24 +144,38 @@
             function stocker()
             {
                 var first = document.GetElementById("first");   
-                var second = document.GetElementById("second");  
-                var third = document.GetElementById("third"); 
                 
                 $.ajax({
-                        url: "/findStockF",
+                        url: "/addStock",
                         type: "POST", 
                         dataType: 'html', 
-                        data: { firstStock: first, secondStock: second, thirdStock: third }, 
+                        data: { ticker: first }, 
                         success: function(result)
                         { 
-                            getBalance();
-                            //Will give option to purchase stock later
+                            if (result =="false")
+                            {
+                                document.getElementById("first").innerHTML = "Ticker invalid";   
+                            }
+                            else
+                            {
+                                document.getElementById("first").innerHTML = result;
+                                firstB.style.visibility='hidden';
+                                secondB.style.visibility='visible';
+                                second.style.visibility='visible';
+                            }
                         },
                         error: function()
                         {
                             alert("Failed to find stock");   
                         }
                     });
+            }
+            
+            function canceler()
+            {
+                firstB.style.visibility='visible';
+                secondB.style.visibility='hidden';
+                second.style.visibility='hidden';
             }
         </script>
         <div align="top" id="banner"><p align="right"><input type="Submit" id="logout" name="logout" value="Logout" onclick=logout()></p></div>
@@ -171,10 +185,12 @@
         <div align="center">Current account balance</div>
         <div align="center"><input type="text" readonly="readonly" id="curBalance"></div>
         
-        <div align="left"><p><input type="text" id="first"><label id="firstL" value="hi"></label></p>
-        <p><input type="text" id="second"><label id="secondL" value="no"></label></p>
-        <p><input type="text" id="second"><label id="thirdL"></label></p></div>
-        <div align="left"><input type="Submit" onclick="stocker" value="Find Stock"></div>
+        <div align="left"><p>Please input your stock tickers, you must do this 3 times.</p>
+        <p><input type="text" id="first"><label id="firstL"></label><div id="second" visible=false</div></p></div>
+        <p><div align="left" visible=true id="firstB"><input type="Submit" onclick=stocker() value="Find Stock"></div>
+        <div align="left" visible=false id="secondB"><input type="Submit" onclick=buyer() value="Purchase"></div></p>
+        <input type="Submit" value="Cancel" onclick=canceler()>
+        
         
         <div id="table"></div>
         <div id="pieChartDiv">
