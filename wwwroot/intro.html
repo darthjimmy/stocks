@@ -106,7 +106,7 @@
             function stocker()
             {
                 var first = document.getElementById("first").value;   
-                
+                var username = sessionStorage.getItem("username");
                 $.ajax({
                         url: "/addStock",
                         type: "POST", 
