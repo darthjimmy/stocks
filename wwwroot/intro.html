@@ -186,9 +186,9 @@
         <div align="center"><input type="text" readonly="readonly" id="curBalance"></div>
         
         <div align="left"><p>Please input your stock tickers, you must do this 3 times.</p>
-        <p><input type="text" id="first"><label id="firstL"></label><div id="second" visible=false</div></p></div>
-        <p><div align="left" visible=true id="firstB"><input type="Submit" onclick=stocker() value="Find Stock"></div>
-        <div align="left" visible=false id="secondB"><input type="Submit" onclick=buyer() value="Purchase"></div></p>
+        <p><input type="text" id="first"><label id="firstL"></label><div id="second" visible=hidden><input type="text" id="secondT"></div></p></div>
+        <p><div align="left" visible=visible id="firstB"><input type="Submit" onclick=stocker() value="Find Stock"></div>
+        <div align="left" visible=hidden id="secondB"><input type="Submit" onclick=buyer() value="Purchase"></div></p>
         <input type="Submit" value="Cancel" onclick=canceler()>
         
         
