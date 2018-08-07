@@ -103,47 +103,9 @@
                 window.location.href="index.html";
             }
             
-                            var data = {
-                datasets: [{
-                    data: [33, 33, 34],
-                    backgroundColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)'
-                    ],
-                    label: 'Dataset 1'
-                }],
-                labels: ["Red", "Blue", "Yellow"]
-            };
-            var options = {
-                responsive: true,
-                animation: {
-                    animateRotate: true,
-                    animateScale: true
-                }
-            };
-            function drawCharts()
-            {
-                var ctx = document.getElementById("pieChartCanvas");
-                var pieChart = new Chart(ctx, {
-                    type: 'pie',
-                    data: data,
-                    options: options
-                });
-                $("#pieChartCanvas").on('click', function(evt) {
-                    var activePoints = pieChart.getElementsAtEvent(evt);
-                    var firstPoint = activePoints[0];
-                    if (firstPoint !== undefined) {
-                        data.datasets[firstPoint._datasetIndex].data[firstPoint._index] += parseFloat(incrementAmount.value);
-                        pieChart.update();
-                    }
-                });
-                window.pieChartCanvas = pieChart
-            }
-            
             function stocker()
             {
-                var first = document.getElementById("first");   
+                var first = document.getElementById("first").value;   
                 
                 $.ajax({
                         url: "/addStock",
@@ -193,12 +155,7 @@
         <input type="Submit" value="Cancel" onclick=canceler()>
         
         
-        <div id="table"></div>
-        <div id="pieChartDiv">
-            <canvas id="pieChartCanvas" width="50%" height="50%"></canvas>
-            <p align="center">Increment: <input type="text" id="incrementAmount" value="1"></p>
-        </div>
-        <div id="barChartDiv"><canvas id="barChartCanvas"></canvas></div>
+        
     </body>
 </html>
 
