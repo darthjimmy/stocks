@@ -170,7 +170,7 @@ namespace stocks
         public static bool PurchaseStock(string username, string ticker, int shares)
         {
             int newShares = 0;
-            int stockID = -1;
+            long stockID = -1;
             int userInvestmentsID = -1;
             decimal difference = 0;
 
@@ -231,11 +231,11 @@ namespace stocks
                 {
                     if (userInvestmentsID == -1)
                     {
-                        cmd.CommandText = "INSERT INTO userInvestmentsID (userID, stockID, shares) VALUES (@userID, @stockID, @shares)";
+                        cmd.CommandText = "INSERT INTO userInvestments (userID, stockID, shares) VALUES (@userID, @stockID, @shares)";
                     }
                     else
                     {
-                        cmd.CommandText = "UPDATE userInvestmentsID SET shares = @shares WHERE userID = @userID AND stockID = @stockID";
+                        cmd.CommandText = "UPDATE userInvestments SET shares = @shares WHERE userID = @userID AND stockID = @stockID";
                     }
 
                     cmd.Parameters.AddWithValue("@shares", shares);
@@ -300,9 +300,9 @@ namespace stocks
         /// </summary>
         /// <param name="ticker"></param>
         /// <returns></returns>
-        public static int InsertStock(string ticker)
+        public static long InsertStock(string ticker)
         {
-            int stockID = -1;
+            long stockID = -1;
 
             using (var conn = new MySqlConnection(connstring.ToString()))
             {
@@ -331,15 +331,7 @@ namespace stocks
                         cmd.Parameters.AddWithValue("@ticker", ticker);
                         cmd.ExecuteNonQuery();
 
-                        cmd.CommandText = "SELECT LAST_INSERT_ID();";
-
-                        using (MySqlDataReader reader = cmd.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                stockID = reader.GetInt32("stockID");
-                            }
-                        }
+                        stockID = cmd.LastInsertedId;
                     }
                 }
             }
