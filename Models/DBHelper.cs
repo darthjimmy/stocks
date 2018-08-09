@@ -255,6 +255,8 @@ namespace stocks
                 decimal pricer = 0;
                 int sharer = 0;
                 decimal price = 0;
+                int oldShares = 0;
+                int userInvestmentsID = -1;
                 conn.Open();
                 using (MySqlCommand cmd = conn.CreateCommand())
                 {
@@ -269,7 +271,6 @@ namespace stocks
                         }
                     }
                     
-                    int oldShares = 0;
                     cmd.CommandText = "SELECT userInvestmentsID, shares FROM userInvestments WHERE stockID = @stockID AND userID = @userID";
                     cmd.Parameters.AddWithValue("@stockID", stockID);
                     cmd.Parameters.AddWithValue("@userID", GetUserId(username));
@@ -321,7 +322,7 @@ namespace stocks
             return true;
         }
         
-        public static bool History(int shares, int stockID, string username, decimal price)
+        public static bool History(int shares, long stockID, string username, decimal price)
         {
             using (var conn = new MySqlConnection(connstring.ToString()))
             {
@@ -335,7 +336,7 @@ namespace stocks
                     cmd.Parameters.AddWithValue("@userID", GetUserId(username));
                     cmd.Parameters.AddWithValue("@stockID", stockID);
                     cmd.Parameters.AddWithValue("@shares", shares);
-                    cmd.Parameters.AddWithValue("@dater", DateTime.now);
+                    cmd.Parameters.AddWithValue("@dater", DateTime.Now);
                     cmd.Parameters.AddWithValue("@price", price);
                     
                     cmd.ExecuteNonQuery();
