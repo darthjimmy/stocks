@@ -173,12 +173,13 @@ namespace stocks
             long stockID = -1;
             int userInvestmentsID = -1;
             decimal difference = 0;
-
+            decimal cost = StockPrice(ticker);
+            decimal coster = cost;
+            int sharer = 0;
             if (shares > 0)
             {
                 decimal balance = GetBalance(username);
-                decimal cost = StockPrice(ticker);
-                int coster = cost;
+                
                 cost = cost * shares;
                 if (balance < cost)
                 {
@@ -221,7 +222,7 @@ namespace stocks
                             newShares = reader.GetInt32("shares");
                         }
                     }
-                    int sharer = shares;
+                    sharer = shares;
                     shares = shares + newShares;
 
                     if (userInvestmentsID == -1)
@@ -237,7 +238,7 @@ namespace stocks
 
                     if (cmd.ExecuteNonQuery() > 0) 
                     {
-                        History(sharer, userID, username, coster);
+                        History(sharer, stockID, username, coster);
                         return true;
                     }
                 }
@@ -251,6 +252,9 @@ namespace stocks
             {
                 shares = shares * (-1);
                 int stockID = -1;
+                decimal pricer = 0;
+                int sharer = 0;
+                decimal price = 0;
                 conn.Open();
                 using (MySqlCommand cmd = conn.CreateCommand())
                 {
@@ -283,10 +287,10 @@ namespace stocks
                     {
                         return false;
                     }
-                    decimal price = StockPrice(ticker);
-                    decimal pricer = price;
+                    price = StockPrice(ticker);
+                    pricer = price;
                     price = price * shares;
-                    int sharer = shares;
+                    sharer = shares;
                     shares = oldshares + shares;
                     
                     cmd.CommandText = "UPDATE userInvestments SET shares = @shares WHERE userID = @userID AND stockID = @stockID";
