@@ -88,6 +88,16 @@ namespace stocks
                     template: "/stocks",
                     defaults: new { controller = "Home", action = "DoStocks" }
                 );
+                routes.MapRoute(
+                    name: "try_getStocks",
+                    template: "/getStocks",
+                    defaults: new {Controller = "Home", action = "GetStocks" }
+                );
+                routes.MapRoute(
+                    name: "try_refreshStockData",
+                    template: "/refreshStockData",
+                    defaults: new {Controller = "Home", action = "RefreshStockData" }
+                );
             });
         }
     }

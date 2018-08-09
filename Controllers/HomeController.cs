@@ -88,5 +88,26 @@ namespace stocks.Controllers
         {
             return DBHelper.GetBalance(username);
         }
+
+        [HttpPost]
+        public string GetStocks(string username)
+        {
+            return DBHelper.GetStocks(username);
+        }
+
+        [HttpPost]
+        public bool RefreshStockData()
+        {
+            var client = new StockDataClient();
+            var quotes = new List<DelayedQuote>();
+            var tickers = DBHelper.GetAllStocks();
+
+            foreach(var ticker in tickers)
+            {
+                quotes.Add(client.GetDelayedQuote(ticker).Result);
+            }
+            
+            return DBHelper.UpdateAllStocks(quotes);
+        }
     }
 }

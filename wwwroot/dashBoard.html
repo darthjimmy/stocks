@@ -11,6 +11,7 @@
             var username = sessionStorage.getItem("username");
             var password = sessionStorage.getItem("password");
             var typer = "login";
+
             //call backend to make sure this username and password exists. 
             //if (!backend()) 
             $.ajax({
@@ -27,7 +28,6 @@
                         else
                         {
                             getBalance();
-                            drawCharts();
                         }
                     },
                     error: function()
@@ -46,6 +46,10 @@
                     if (result == "false")
                     {
                         window.location.href="intro.html";
+                    }
+                    else
+                    {
+                        getStocks();
                     }
                 },
                 error: function()
@@ -71,6 +75,7 @@
                         }
                     });
             }
+
             function addBalance()
             {
                 var amount = amounter.value;
@@ -90,6 +95,42 @@
                     });
             }
             
+            function getStocks()
+            {
+                $.ajax({
+                    url: "/getStocks",
+                    type: "POST",
+                    dataType: 'html',
+                    data: { username: username },
+                    success: function(result)
+                    {
+                        drawCharts(result);
+                    },
+                    error: function()
+                    {
+                        alert("Failed to get list of stocks!");
+                    }
+                });
+            }
+
+            function updateStockPrices()
+            {
+                $.ajax({
+                    url: "/refreshStockData",
+                    type: "POST",
+                    dataType: 'html',
+                    data: { username: username },
+                    success: function()
+                    {
+                        getStocks();
+                    },
+                    error: function()
+                    {
+                        alert("Failed to refresh stock data!");
+                    }
+                });
+            }
+
             function logout()
             {
                 //Set session to cleared.
@@ -97,29 +138,29 @@
                 window.location.href="index.html";
             }
 
-                var data = {
-                datasets: [{
-                    data: [33, 33, 34],
-                    backgroundColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)'
-                    ],
-                    label: 'Dataset 1'
-                }],
-                labels: ["Red", "Blue", "Yellow"]
-            };
-
-            var options = {
-                responsive: true,
-                animation: {
-                    animateRotate: true,
-                    animateScale: true
-                }
-            };
-
-            function drawCharts()
+            function drawCharts(stocksData)
             {
+                var data = {
+                    datasets: [{
+                        data: stocksData,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)'
+                        ],
+                        label: 'Stocks'
+                    }],
+                    labels: ["stock1", "stock2", "stock3"]
+                };
+
+                var options = {
+                    responsive: true,
+                    animation: {
+                        animateRotate: true,
+                        animateScale: true
+                    }
+                };
+
                 var ctx = document.getElementById("pieChartCanvas");
                 var pieChart = new Chart(ctx, {
                     type: 'pie',
@@ -144,6 +185,9 @@
             <p><input type="Submit" value="Submit" onclick=addBalance()></p></div>
         <div align="center">Current account balance</div>
         <div align="center"><input type="text" readonly="readonly" id="curBalance"></div>
+        <div align="center">
+            <input type="button" value="Refresh Stock Data" onclick="updateStockPrices()"> Data provided for free by <a href="https://iextrading.com/developer">IEX</a>. View <a href="https://iextrading.com/api-exhibit-a/">IEX’s Terms of Use.</a>
+        </div>
         
         <div id="table"></div>
         <div id="pieChartDiv">

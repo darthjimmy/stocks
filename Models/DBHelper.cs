@@ -1,6 +1,7 @@
 using MySql.Data.MySqlClient;
 using System.Collections.Generic;
 using System;
+using Newtonsoft.Json;
 
 namespace stocks
 {
@@ -159,7 +160,7 @@ namespace stocks
                         }
                     }
 
-                    if (amount > 3) return true;
+                    if (amount >= 3) return true;
                     return false;
 
 
@@ -420,8 +421,10 @@ namespace stocks
 
                     if (stockID == -1)
                     {
+                        StockDataClient client = new StockDataClient();
                         // we need to create it
-                        cmd.CommandText = "INSERT INTO stocks (ticker) VALUES (@ticker);";
+                        cmd.CommandText = "INSERT INTO stocks (ticker, costPerShare) VALUES (@ticker, @costPerShare);";
+                        cmd.Parameters.AddWithValue("@costPerShare", client.GetDelayedQuote(ticker).Result.DelayedPrice);
                         cmd.ExecuteNonQuery();
 
                         stockID = cmd.LastInsertedId;
@@ -430,6 +433,91 @@ namespace stocks
             }
 
             return stockID;
+        }
+
+        public static string GetStocks(string username)
+        {
+            string stockList = "";
+
+            using (var conn = new MySqlConnection(connstring.ToString()))
+            {
+                conn.Open();
+                using (MySqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT i.userInvestmentsID, u.username, s.ticker, s.costPerShare, i.shares from userInvestments i inner join stocks s on s.stockID = i.stockID inner join user u on u.userID = i.userID WHERE u.username = @username";
+                    cmd.Parameters.AddWithValue("@username", username);
+
+                    var stocks = new List<UserInvestment>();
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            stocks.Add(new UserInvestment
+                            {
+                                UserInvestmentsID = reader.GetInt64("userInvestmentsID"),
+                                Username = reader.GetString("username"),
+                                Ticker = reader.GetString("ticker"),
+                                CostPerShare = reader.GetDecimal("CostPerShare"),
+                                Shares = reader.GetDouble("shares")
+                            });
+                        }
+                    }
+
+                    stockList = JsonConvert.SerializeObject(stocks);
+                }
+            }
+        
+            return stockList;
+        }
+
+        public static List<string> GetAllStocks()
+        {
+            var tickers = new List<string>();
+
+            using (var conn = new MySqlConnection(connstring.ToString()))
+            {
+                conn.Open();
+                using (MySqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT ticker from stocks";
+
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            tickers.Add(reader.GetString("ticker"));
+                        }
+                    }
+                }
+
+            }
+            return tickers;
+        }
+
+        public static bool UpdateAllStocks(List<DelayedQuote> stocks)
+        {
+            bool success = false;
+            using (var conn = new MySqlConnection(connstring.ToString()))
+            {   
+                using (MySqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "UPDATE stocks SET costPerShare = @cost WHERE ticker = @ticker";
+                    cmd.Parameters.AddWithValue("@ticker", "");
+                    cmd.Parameters.AddWithValue("@cost", 0.0m);
+
+                    conn.Open();
+                    foreach (var stock in stocks)
+                    {
+                        cmd.Parameters["@ticker"].Value = stock.Symbol;
+                        cmd.Parameters["@cost"].Value = stock.DelayedPrice;
+
+                        if (cmd.ExecuteNonQuery() > 0)
+                            success = true;
+                    }
+                }
+            }
+
+            return success;
         }
     }
 }
