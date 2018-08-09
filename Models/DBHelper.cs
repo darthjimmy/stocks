@@ -245,6 +245,78 @@ namespace stocks
             return false;
         }
         
+        public static bool SellStock(string username, string ticker, int shares)
+        {
+            using (var conn = new MySqlConnection(connstring.ToString()))
+            {
+                shares = shares * (-1);
+                int stockID = -1;
+                conn.Open();
+                using (MySqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT stockID FROM stocks WHERE ticker = @ticker";
+                    cmd.Parameters.AddWithValue("@ticker", ticker);
+                    
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            stockID = reader.GetInt32("stockID");
+                        }
+                    }
+                    
+                    int oldShares = 0;
+                    cmd.CommandText = "SELECT userInvestmentsID, shares FROM userInvestments WHERE stockID = @stockID AND userID = @userID";
+                    cmd.Parameters.AddWithValue("@stockID", stockID);
+                    cmd.Parameters.AddWithValue("@userID", GetUserId(username));
+
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            userInvestmentsID = reader.GetInt32("userInvestmentsID");
+                            oldShares = reader.GetInt32("shares");
+                        }
+                    }
+                    
+                    if (oldShares < shares)
+                    {
+                        return false;
+                    }
+                    decimal price = StockPrice(ticker);
+                    decimal pricer = price;
+                    price = price * shares;
+                    int sharer = shares;
+                    shares = oldshares + shares;
+                    
+                    cmd.CommandText = "UPDATE userInvestments SET shares = @shares WHERE userID = @userID AND stockID = @stockID";
+
+                    cmd.Parameters.AddWithValue("@shares", shares);
+                    
+                    cmd.ExecuteNonQuery();
+                    
+                    cmd.CommandText = "SELECT balance FROM user WHERE userID = @userID";
+                    
+                    decimal balance = 0;
+                    
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            balance = reader.GetDecimal("balance");
+                        }
+                    }
+                    balance = balance + price;
+                    
+                    cmd.CommandText = "UPDATE user SET balance = @balance WHERE userID = @userID";
+                    cmd.Parameters.AddWithValue("@balance", balance);
+                    cmd.ExecuteNonQuery();
+                }
+                History(sharer, stockID, username, pricer);
+            }
+            return true;
+        }
+        
         public static bool History(int shares, int stockID, string username, decimal price)
         {
             using (var conn = new MySqlConnection(connstring.ToString()))
