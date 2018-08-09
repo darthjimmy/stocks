@@ -178,7 +178,7 @@ namespace stocks
             {
                 decimal balance = GetBalance(username);
                 decimal cost = StockPrice(ticker);
-
+                int coster = cost;
                 cost = cost * shares;
                 if (balance < cost)
                 {
@@ -221,7 +221,7 @@ namespace stocks
                             newShares = reader.GetInt32("shares");
                         }
                     }
-
+                    int sharer = shares;
                     shares = shares + newShares;
 
                     if (userInvestmentsID == -1)
@@ -235,10 +235,37 @@ namespace stocks
 
                     cmd.Parameters.AddWithValue("@shares", shares);
 
-                    if (cmd.ExecuteNonQuery() > 0) return true;
+                    if (cmd.ExecuteNonQuery() > 0) 
+                    {
+                        History(sharer, userID, username, coster);
+                        return true;
+                    }
                 }
             }
             return false;
+        }
+        
+        public static bool History(int shares, int stockID, string username, decimal price)
+        {
+            using (var conn = new MySqlConnection(connstring.ToString()))
+            {
+                conn.Open();
+                using (MySqlCommand cmd = conn.CreateCommand())
+                {
+                    
+                    cmd.CommandText = "INSERT INTO userInvestments (userID, stockID, dateOfChange, stockPrice, userShares) " +
+                        "VALUES (@userID, @stockID, @dater, @price, @shares)";
+
+                    cmd.Parameters.AddWithValue("@userID", GetUserId(username));
+                    cmd.Parameters.AddWithValue("@stockID", stockID);
+                    cmd.Parameters.AddWithValue("@shares", shares);
+                    cmd.Parameters.AddWithValue("@dater", DateTime.now);
+                    cmd.Parameters.AddWithValue("@price", price);
+                    
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            return true;
         }
 
         public static decimal StockPrice(string ticker)
