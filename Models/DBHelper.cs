@@ -292,7 +292,7 @@ namespace stocks
                     pricer = price;
                     price = price * shares;
                     sharer = shares;
-                    shares = oldshares + shares;
+                    shares = oldShares + shares;
                     
                     cmd.CommandText = "UPDATE userInvestments SET shares = @shares WHERE userID = @userID AND stockID = @stockID";
 
