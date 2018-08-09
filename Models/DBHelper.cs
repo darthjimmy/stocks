@@ -463,7 +463,7 @@ namespace stocks
                         }
                     }
 
-                    stockList = JsonConvert.SerializeObject(stocks);
+                    stockList = JsonConvert.SerializeObject(new {stocks});
                 }
             }
         

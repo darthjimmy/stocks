@@ -140,9 +140,12 @@
 
             function drawCharts(stocksData)
             {
+                var stockNames = [stocksData.stocks[0].Ticker, stocksData.stocks[1].Ticker, stocksData.stocks[2].Ticker];
+                var stockShares = [stocksData.stocks[0].Shares, stocksData.stocks[1].Shares, stocksData.stocks[2].Shares];
+
                 var data = {
                     datasets: [{
-                        data: stocksData,
+                        data: stockShares,
                         backgroundColor: [
                             'rgba(255, 99, 132, 1)',
                             'rgba(54, 162, 235, 1)',
@@ -150,7 +153,7 @@
                         ],
                         label: 'Stocks'
                     }],
-                    labels: ["stock1", "stock2", "stock3"]
+                    labels: stockNames
                 };
 
                 var options = {
