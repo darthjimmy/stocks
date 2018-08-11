@@ -140,8 +140,9 @@
 
             function drawCharts(stocksData)
             {
-                var stockNames = [stocksData.stocks[0].Ticker, stocksData.stocks[1].Ticker, stocksData.stocks[2].Ticker];
-                var stockShares = [stocksData.stocks[0].Shares, stocksData.stocks[1].Shares, stocksData.stocks[2].Shares];
+                var data = JSON.parse(stocksData);
+                var stockNames = [data.Stocks[0].Ticker, data.Stocks[1].Ticker, data.Stocks[2].Ticker];
+                var stockShares = [data.Stocks[0].Shares, data.Stocks[1].Shares, data.Stocks[2].Shares];
 
                 var data = {
                     datasets: [{

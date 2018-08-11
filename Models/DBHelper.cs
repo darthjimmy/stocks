@@ -447,12 +447,12 @@ namespace stocks
                     cmd.CommandText = "SELECT i.userInvestmentsID, u.username, s.ticker, s.costPerShare, i.shares from userInvestments i inner join stocks s on s.stockID = i.stockID inner join user u on u.userID = i.userID WHERE u.username = @username";
                     cmd.Parameters.AddWithValue("@username", username);
 
-                    var stocks = new List<UserInvestment>();
+                    var stocks = new UserInvestmentCollection();
                     using (MySqlDataReader reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            stocks.Add(new UserInvestment
+                            stocks.Stocks.Add(new UserInvestment
                             {
                                 UserInvestmentsID = reader.GetInt64("userInvestmentsID"),
                                 Username = reader.GetString("username"),
@@ -463,7 +463,7 @@ namespace stocks
                         }
                     }
 
-                    stockList = JsonConvert.SerializeObject(new {stocks});
+                    stockList = JsonConvert.SerializeObject(stocks);
                 }
             }
         
