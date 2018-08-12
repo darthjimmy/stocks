@@ -183,13 +183,13 @@
                 window.pieChartCanvas = pieChart;
 
                 $("#table").empty();
-                $("#table").append('<table id="dataTable" width="50%" height="50%" border="1"><tr><th>Stock Ticker</th><th>Stock Price</th><th>Shares</th>');
+                $("#table").append('<table id="dataTable" width="50%" height="50%" border="1"><tr><th>Stock Ticker</th><th>Stock Price</th><th>Amount Invested</th>');
                 var i = 0;
                 for(var i = 0; i < data.Stocks.length; i++)
                 {
-                    $("#dataTable").append('<tr><td>' + data.Stocks[i].Ticker + '</td><td>' + data.Stocks[i].CostPerShare + '</td><td><input type="text" id="shares' + i + '" value="' + data.Stocks[i].Shares + '" /></td></tr>');
+                    $("#dataTable").append('<tr><td>' + data.Stocks[i].Ticker + '</td><td>' + data.Stocks[i].CostPerShare + '</td><td><input type="text" id="shares' + i + '" value="' + data.Stocks[i].Shares * data.Stocks[i].CostPerShare + '" /></td></tr>');
 
-                    $("#shares" + i).on('change', function(evt) {
+                    $("#shares" + i).on('leave', function(evt) {
                         var shares = evt.target.value;
                     });
                 }
