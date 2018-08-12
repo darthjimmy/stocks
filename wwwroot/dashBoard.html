@@ -94,6 +94,49 @@
                         }
                     });
             }
+
+            function updateShares(evt)
+            {
+                var amt1 = amount1.value;
+                var amt2 = amount2.value;
+                var amt3 = amount3.value;
+
+                var balance = curBalance.value;
+
+                switch(evt.target)
+                {
+                    case amount1:
+                        var ratio1 = amt2 / balance;
+                        var ratio2 = amt3 / balance;
+                        var remainder = balance - amt1;
+                        amt2 = remainder * ratio1;
+                        remainder = remainder - amt2;
+                        amt3 = remainder * ratio2;
+                        break;
+                        
+                    case amount2:
+                        var ratio1 = amt1 / balance;
+                        var ratio2 = amt3 / balance;
+                        var remainder = balance - amt2;
+                        amt1 = remainder * ratio1;
+                        remainder = remainder - amt1;
+                        amt3 = remainder * ratio2;
+                        break;
+
+                    case amount3:
+                        var ratio1 = amt1 / balance;
+                        var ratio2 = amt2 / balance;
+                        var remainder = balance - amt3;
+                        amt1 = remainder * ratio1;
+                        remainder = remainder - amt1;
+                        amt2 = remainder * ratio2;
+                        break;
+                }
+
+                amount1.value = amt1;
+                amount2.value = amt2;
+                amount3.value = amt3;
+            }
             
             function getStocks()
             {
@@ -142,7 +185,7 @@
             {
                 var data = JSON.parse(stocksData);
                 var stockNames = [data.Stocks[0].Ticker, data.Stocks[1].Ticker, data.Stocks[2].Ticker];
-                var stockShares = [data.Stocks[0].Shares, data.Stocks[1].Shares, data.Stocks[2].Shares];
+                var stockShares = [data.Stocks[0].Shares * data.Stocks[0].CostPerShare, data.Stocks[1].Shares * data.Stocks[1].CostPerShare, data.Stocks[2].Shares * data.Stocks[2].CostPerShare];
 
                 var dataSet = {
                     datasets: [{
@@ -182,19 +225,26 @@
                 });
                 window.pieChartCanvas = pieChart;
 
-                $("#table").empty();
-                $("#table").append('<table id="dataTable" width="50%" height="50%" border="1"><tr><th>Stock Ticker</th><th>Stock Price</th><th>Amount Invested</th>');
-                var i = 0;
-                for(var i = 0; i < data.Stocks.length; i++)
-                {
-                    $("#dataTable").append('<tr><td>' + data.Stocks[i].Ticker + '</td><td>' + data.Stocks[i].CostPerShare + '</td><td><input type="text" id="shares' + i + '" value="' + data.Stocks[i].Shares * data.Stocks[i].CostPerShare + '" /></td></tr>');
+                ticker1.value = data.Stocks[0].Ticker;
+                price1.value = data.Stocks[0].CostPerShare;
+                amount1.value = data.Stocks[0].Shares * data.Stocks[0].CostPerShare;
+                $("#amount1").focusout(function(evt){
+                    updateShares(evt);
+                });
 
-                    $("#shares" + i).on('leave', function(evt) {
-                        var shares = evt.target.value;
-                    });
-                }
-
-                $("#table").append('</table');
+                ticker2.value = data.Stocks[1].Ticker;
+                price2.value = data.Stocks[1].CostPerShare;
+                amount2.value = data.Stocks[1].Shares * data.Stocks[1].CostPerShare;
+                $("#amount2").focusout(function(evt){
+                    updateShares(evt);
+                });
+                
+                ticker3.value = data.Stocks[2].Ticker;
+                price3.value = data.Stocks[2].CostPerShare;
+                amount3.value = data.Stocks[2].Shares * data.Stocks[2].CostPerShare;
+                $("#amount3").focusout(function(evt){
+                    updateShares(evt);
+                });
             }
         </script>
         <div align="top" id="banner"><p align="right"><input type="Submit" id="logout" name="logout" value="Logout" onclick=logout()></p></div>
@@ -212,7 +262,30 @@
             <p><input type="Submit" value="Submit"></p>
         </div>
         
-        <div align="center" id="table"></div>
+        <div align="center" id="table">
+            <table id="dataTable" width="50%" height="50%" border="1">
+                <tr>
+                    <th>Stock Ticker</th>
+                    <th>Stock Price</th>
+                    <th>Amount Invested</th>
+                </tr>
+                <tr>
+                    <td><input type="text" id="ticker1" readonly></input></td>
+                    <td><input type="text" id="price1" readonly></input></td>
+                    <td><input type="text" id="amount1"></input></td>
+                </tr>
+                <tr>
+                    <td><input type="text" id="ticker2" readonly></input></td>
+                    <td><input type="text" id="price2" readonly></input></td>
+                    <td><input type="text" id="amount2"></input></td>
+                </tr>
+                <tr>
+                    <td><input type="text" id="ticker3" readonly></input></td>
+                    <td><input type="text" id="price3" readonly></input></td>
+                    <td><input type="text" id="amount3"></input></td>
+                </tr>
+            </table>
+        </div>
         <div align="center" id="pieChartDiv">
             <canvas id="pieChartCanvas"></canvas>
             <p align="center">Increment: <input type="text" id="incrementAmount" value="1"></p>
