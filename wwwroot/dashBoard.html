@@ -144,7 +144,7 @@
                 var stockNames = [data.Stocks[0].Ticker, data.Stocks[1].Ticker, data.Stocks[2].Ticker];
                 var stockShares = [data.Stocks[0].Shares, data.Stocks[1].Shares, data.Stocks[2].Shares];
 
-                var data = {
+                var dataSet = {
                     datasets: [{
                         data: stockShares,
                         backgroundColor: [
@@ -168,7 +168,7 @@
                 var ctx = document.getElementById("pieChartCanvas");
                 var pieChart = new Chart(ctx, {
                     type: 'pie',
-                    data: data,
+                    data: dataSet,
                     options: options
                 });
 
@@ -176,11 +176,25 @@
                     var activePoints = pieChart.getElementsAtEvent(evt);
                     var firstPoint = activePoints[0];
                     if (firstPoint !== undefined) {
-                        data.datasets[firstPoint._datasetIndex].data[firstPoint._index] += parseFloat(incrementAmount.value);
+                        dataSet.datasets[firstPoint._datasetIndex].data[firstPoint._index] += parseFloat(incrementAmount.value);
                         pieChart.update();
                     }
                 });
-                window.pieChartCanvas = pieChart
+                window.pieChartCanvas = pieChart;
+
+                $("#table").empty();
+                $("#table").append('<table id="dataTable" width="50%" height="50%" border="1"><tr><th>Stock Ticker</th><th>Stock Price</th><th>Shares</th>');
+                var i = 0;
+                for(var i = 0; i < data.Stocks.length; i++)
+                {
+                    $("#dataTable").append('<tr><td>' + data.Stocks[i].Ticker + '</td><td>' + data.Stocks[i].CostPerShare + '</td><td><input type="text" id="shares' + i + '" value="' + data.Stocks[i].Shares + '" /></td></tr>');
+
+                    $("#shares" + i).on('change', function(evt) {
+                        var shares = evt.target.value;
+                    });
+                }
+
+                $("#table").append('</table');
             }
         </script>
         <div align="top" id="banner"><p align="right"><input type="Submit" id="logout" name="logout" value="Logout" onclick=logout()></p></div>
@@ -198,9 +212,9 @@
             <p><input type="Submit" value="Submit"></p>
         </div>
         
-        <div id="table"></div>
-        <div id="pieChartDiv">
-            <canvas id="pieChartCanvas" width="50%" height="50%"></canvas>
+        <div align="center" id="table"></div>
+        <div align="center" id="pieChartDiv">
+            <canvas id="pieChartCanvas"></canvas>
             <p align="center">Increment: <input type="text" id="incrementAmount" value="1"></p>
         </div>
         <div id="barChartDiv"><canvas id="barChartCanvas"></canvas></div>
