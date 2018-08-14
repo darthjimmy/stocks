@@ -139,7 +139,7 @@
                 var username = sessionStorage.getItem("username");
                 var ticker = document.getElementById("first").value;
                 $.ajax({
-                        url: "/buyStock",
+                        url: "/purchaseStocks",
                         type: "POST", 
                         dataType: 'html', 
                         data: { username: username, ticker: first, shares: shares }, 
