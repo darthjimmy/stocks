@@ -114,53 +114,11 @@
                     });
             }
 
-            function updateShares(evt)
+            function updateShares(ticker, price, amt)
             {
-                var amt1 = amount1.value;
-                var amt2 = amount2.value;
-                var amt3 = amount3.value;
+                var shares = amt / price;
 
-                var balance = curBalance.value;
-
-                switch(evt)
-                {
-                    case amount1:
-                        var ratio1 = amt2 / balance;
-                        var ratio2 = amt3 / balance;
-                        var remainder = balance - amt1;
-                        amt2 = remainder * ratio1;
-                        remainder = remainder - amt2;
-                        amt3 = remainder * ratio2;
-                        break;
-                        
-                    case amount2:
-                        var ratio1 = amt1 / balance;
-                        var ratio2 = amt3 / balance;
-                        var remainder = balance - amt2;
-                        amt1 = remainder * ratio1;
-                        remainder = remainder - amt1;
-                        amt3 = remainder * ratio2;
-                        break;
-
-                    case amount3:
-                        var ratio1 = amt1 / balance;
-                        var ratio2 = amt2 / balance;
-                        var remainder = balance - amt3;
-                        amt1 = remainder * ratio1;
-                        remainder = remainder - amt1;
-                        amt2 = remainder * ratio2;
-                        break;
-                }
-
-                amount1.value = amt1;
-                amount2.value = amt2;
-                amount3.value = amt3;
-
-                var shares1 = amt1 / price1.value;
-                var shares2 = amt2 / price2.value;
-                var shares3 = amt3 / price3.value;
-
-                $.when(updateStockShares(ticker1.value, shares1), updateStockShares(ticker2.value, shares2), updateStockShares(ticker3.value, shares3)).done(function(a1, a2, a3)
+                $.when(updateStockShares(ticker, shares)).done(function(a1)
                 {
                     getBalance();
                     $.when(getStocks()).done(function(a1){
@@ -230,6 +188,7 @@
             {
                 var data = JSON.parse(stocksData);
                 var stockNames = [data.Stocks[0].Ticker, data.Stocks[1].Ticker, data.Stocks[2].Ticker];
+                var prices = [data.Stocks[0].CostPerShare, data.Stocks[1].CostPerShare, data.Stocks[2].CostPerShare];
                 var stockShares = [data.Stocks[0].Shares * data.Stocks[0].CostPerShare, data.Stocks[1].Shares * data.Stocks[1].CostPerShare, data.Stocks[2].Shares * data.Stocks[2].CostPerShare];
 
                 var dataSet = {
@@ -240,7 +199,7 @@
                             'rgba(54, 162, 235, 1)',
                             'rgba(255, 206, 86, 1)'
                         ],
-                        label: 'Stocks'
+                        labels: stockNames
                     }],
                     labels: stockNames
                 };
@@ -257,6 +216,13 @@
                 {
                     _pieChart.data = dataSet;
                     _pieChart.update();
+
+                    if (_barChart != undefined)
+                    {
+                        _barChart.data = dataSet;
+                        _barChart.update();
+                    }
+                    
                     return;
                 }
 
@@ -271,19 +237,16 @@
                     var activePoints = _pieChart.getElementsAtEvent(evt);
                     var firstPoint = activePoints[0];
                     if (firstPoint !== undefined) {
-                        dataSet.datasets[firstPoint._datasetIndex].data[firstPoint._index] += parseFloat(incrementAmount.value);
-                        _pieChart.update();
+                        var ticker = dataSet.labels[firstPoint._datasetIndex];
+                        var price = prices[firstPoint._datasetIndex];
+                        var shares = dataSet.datasets[firstPoint._datasetIndex].data[firstPoint._index] + parseFloat(incrementAmount.value);
+
+                        updateShares(ticker, price, shares);
+                        //_pieChart.update();
                     }
                 });
 
                 window.pieChartCanvas = _pieChart;
-
-                if (_barChart != undefined)
-                {
-                    _barChart.data = dataSet;
-                    _barChart.update();
-                    return;
-                }
 
                 var barctx = document.getElementById("barChartCanvas");
                 _barChart = new Chart(barctx, {
@@ -293,11 +256,15 @@
                 });
 
                 $("#barChartCanvas").on('click', function(evt) {
-                    var activePoints = _pieChart.getElementsAtEvent(evt);
+                    var activePoints = _barChart.getElementsAtEvent(evt);
                     var firstPoint = activePoints[0];
                     if (firstPoint !== undefined) {
-                        dataSet.datasets[firstPoint._dataSetIndex].data[firstPoint._index] += parseFloat(incrementAmount.value);
-                        _barChart.update();
+                        var ticker = dataSet.labels[firstPoint._datasetIndex];
+                        var price = prices[firstPoint._datasetIndex];
+                        var shares = dataSet.datasets[firstPoint._datasetIndex].data[firstPoint._index] + parseFloat(incrementAmount.value);
+
+                        updateShares(ticker, price, shares);
+                        //_barChart.update();
                     }
                 });
 
@@ -348,17 +315,17 @@
                 <tr>
                     <td><input type="text" id="ticker1" readonly></input></td>
                     <td><input type="text" id="price1" readonly></input></td>
-                    <td><input type="text" id="amount1" onfocusout="updateShares(this)"></input></td>
+                    <td><input type="text" id="amount1" onfocusout="updateShares(ticker1.value, price1.value, this.value)"></input></td>
                 </tr>
                 <tr>
                     <td><input type="text" id="ticker2" readonly></input></td>
                     <td><input type="text" id="price2" readonly></input></td>
-                    <td><input type="text" id="amount2" onfocusout="updateShares(this)"></input></td>
+                    <td><input type="text" id="amount2" onfocusout="updateShares(ticker2.value, price2.value, this.value)"></input></td>
                 </tr>
                 <tr>
                     <td><input type="text" id="ticker3" readonly></input></td>
                     <td><input type="text" id="price3" readonly></input></td>
-                    <td><input type="text" id="amount3"onfocusout="updateShares(this)"></input></td>
+                    <td><input type="text" id="amount3"onfocusout="updateShares(ticker3.value, price3.value, this.value)"></input></td>
                 </tr>
             </table>
         </div>

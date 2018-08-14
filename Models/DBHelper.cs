@@ -179,14 +179,14 @@ namespace stocks
             decimal sharer = 0;
             if (shares > 0)
             {
-                // decimal balance = GetBalance(username);
+                decimal balance = GetBalance(username);
                 
-                // cost = cost * shares;
-                // if (balance < cost)
-                // {
-                //     return false;
-                // }
-                // difference = balance - cost;
+                cost = cost * shares;
+                if (balance < cost)
+                {
+                    return false;
+                }
+                difference = balance - cost;
             }
 
             using (var conn = new MySqlConnection(connstring.ToString()))
@@ -196,12 +196,12 @@ namespace stocks
                 {
                     if (shares > 0)
                     {
-                        // cmd.CommandText = "UPDATE user SET balance = @difference WHERE username = @username";
+                        cmd.CommandText = "UPDATE user SET balance = @difference WHERE username = @username";
 
-                        // cmd.Parameters.AddWithValue("@username", username);
-                        // cmd.Parameters.AddWithValue("@difference", difference);
+                        cmd.Parameters.AddWithValue("@username", username);
+                        cmd.Parameters.AddWithValue("@difference", difference);
 
-                        // cmd.ExecuteNonQuery();
+                        cmd.ExecuteNonQuery();
                     }
                 
                     stockID = InsertStock(ticker);
@@ -224,7 +224,7 @@ namespace stocks
                         }
                     }
                     sharer = shares;
-                    //shares = shares + newShares;
+                    shares = shares + newShares;
 
                     if (userInvestmentsID == -1)
                     {
