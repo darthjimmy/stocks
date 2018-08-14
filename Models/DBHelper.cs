@@ -173,7 +173,7 @@ namespace stocks
             decimal stockPrice = 0;
             string ticker = "";
             double userShares = 0;
-            DateTime dateOfChange = "";
+            DateTime dateOfChange;
             List<UserHistory> history = new List<UserHistory>();
             using (var conn = new MySqlConnection(connstring.ToString()))
             {
@@ -196,7 +196,7 @@ namespace stocks
                                 ticker = reader.GetString("ticker"),
                                 dateOfChange = reader.GetDateTime("dateOfChange"),
                                 stockPrice = reader.GetDecimal("stockPrice"),
-                                userShares = reader.GetDouble("userShares"),
+                                CostPerShare = reader.GetDouble("userShares"),
                             });
                         }
                     }
