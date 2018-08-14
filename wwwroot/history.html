@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="css/styler.css">
+        <script src="/node_modules/jquery/dist/jquery.js"></script>
+        <script src="/node_modules/chart.js/dist/Chart.js"></script>
+    </head>
+    <body>
+        <script>
+            var username = sessionStorage.getItem("username");
+            var password = sessionStorage.getItem("password");
+            var typer = "login";
+            var _stocksData = "";
+            var _pieChart;
+            var _barChart;
+            //call backend to make sure this username and password exists. 
+            //if (!backend()) 
+            $.ajax({
+                    url: "/login",
+                    type: "POST", 
+                    dataType: 'html', 
+                    data: { username: username, password: password, type: typer}, 
+                    success: function(result)
+                    { 
+                        if (result == "false")
+                        {
+                            window.location.href="index.html";
+                        }
+                        else
+                        {
+                            getBalance();
+                        }
+                    },
+                    error: function()
+                    {
+                        window.location.href="index.html";   
+                    }
+                });
+            $.ajax
+            ({
+                url: "/stocks",
+                type: "POST", 
+                dataType: 'html', 
+                data: { username: username }, 
+                success: function(result)
+                { 
+                    if (result == "false")
+                    {
+                        window.location.href="intro.html";
+                    }
+                    else
+                    {
+                        $.when(getStocks()).done(function(a1){
+                            drawCharts(_stocksData);
+                            updateTable(_stocksData);
+                        });
+                        
+                    }
+                },
+                error: function()
+                {
+                    window.location.href="index.html";   
+                }
+            });
+            
+            function back()
+            {
+              window.location.href="dashboard.html";
+            }
+            
+        </script>
+        <div align="center"><p>Please review your history</p></div>
+        <div align="right"><input type="Submit" onclick=back() value="Back"></div>
+    </body>
+</html>
+            
