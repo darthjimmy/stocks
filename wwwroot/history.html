@@ -69,9 +69,50 @@
               window.location.href="dashboard.html";
             }
             
+            
+            $.ajax
+            ({
+                url: "/history",
+                type: "POST", 
+                dataType: 'html', 
+                data: { username: username }, 
+                success: function(data)
+                { 
+                     var r = new Array(), j = -1;
+                     for (var key=0, size=data.length; key<size; key++){
+                         r[++j] ='<tr><td>';
+                         r[++j] = data[key][0];
+                         r[++j] = '</td><td class="whatever1">';
+                         r[++j] = data[key][1];
+                         r[++j] = '</td><td class="whatever2">';
+                         r[++j] = data[key][2];
+                         r[++j] = '</td></tr>';
+                     }
+                    $('#dataTable').html(r.join('')); 
+                },
+                error: function()
+                {
+                    alert("Failure to load history");   
+                }
+            });
+            
+            
+            
         </script>
         <div align="center"><p>Please review your history</p></div>
         <div align="right"><input type="Submit" onclick=back() value="Back"></div>
+        
+        <div align="center"><table id="dataTable" class="table table-striped table-hover">
+
+                        <tbody>
+
+                        </tbody>
+
+                    </table>
+        </div>
+        
+        
+        
     </body>
 </html>
             
