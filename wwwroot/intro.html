@@ -58,6 +58,34 @@
                     alert("Unable to load stock options"); 
                 }
             });
+            
+            function moveOn()
+            {
+                var username = sessionStorage.getItem("username");
+             $.ajax
+            ({
+                url: "/stocks",
+                type: "POST", 
+                dataType: 'html', 
+                data: { username: username }, 
+                success: function(result)
+                { 
+                    if (result == "true")
+                    {
+                        window.location.href="dashboard.html";
+                    }
+                   // else
+                   // {
+                        //Get stock options
+                        
+                    //}
+                },
+                error: function()
+                {
+                    alert("Unable to load stock options"); 
+                }
+            });   
+            }
 
             function getBalance()
             {
@@ -151,6 +179,7 @@
                             document.getElementById("secondB").hidden = true;
                             document.getElementById("second").hidden = true;
                             getBalance();
+                            moveOn();
                         },
                         error: function()
                         {
