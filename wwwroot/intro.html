@@ -121,6 +121,7 @@
                             {
                                 document.getElementById("firstL").innerHTML = result;
                                 document.getElementById("first").hidden = true;
+                                document.getElementById("firstB").hidden = true;
                                 document.getElementById("secondB").hidden = false;
                                 document.getElementById("second").hidden = false;
                             }
@@ -128,6 +129,32 @@
                         error: function()
                         {
                             alert("Failed to find stock");   
+                        }
+                    });
+            }
+            
+            function buyer()
+            {
+                var shares = document.getElementById("secondT").value;   
+                var username = sessionStorage.getItem("username");
+                var ticker = document.getElementById("first").value;
+                $.ajax({
+                        url: "/buyStock",
+                        type: "POST", 
+                        dataType: 'html', 
+                        data: { username: username, ticker: first, shares: shares }, 
+                        success: function(result)
+                        { 
+                            document.getElementById("firstL").innerHTML = "";
+                            document.getElementById("first").hidden = false;
+                            document.getElementById("firstB").hidden = false;
+                            document.getElementById("secondB").hidden = true;
+                            document.getElementById("second").hidden = true;
+                            getBalance();
+                        },
+                        error: function()
+                        {
+                            alert("Failed to buy stock");   
                         }
                     });
             }
