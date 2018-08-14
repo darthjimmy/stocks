@@ -195,8 +195,8 @@ namespace stocks
                             {
                                 ticker = reader.GetString("ticker"),
                                 dateOfChange = reader.GetDateTime("dateOfChange"),
-                                stockPrice = reader.GetDecimal("stockPrice"),
-                                CostPerShare = reader.GetDouble("userShares"),
+                                CostPerShare = reader.GetDecimal("stockPrice"),
+                                userShares = reader.GetDouble("userShares"),
                             });
                         }
                     }
