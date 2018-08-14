@@ -174,7 +174,7 @@ namespace stocks
             string ticker = "";
             double userShares = 0;
             DateTime dateOfChange = "";
-            List<UserHistory> history = new List<UserHistory>;
+            List<UserHistory> history = new List<UserHistory>();
             using (var conn = new MySqlConnection(connstring.ToString()))
             {
                 conn.Open();
@@ -182,8 +182,8 @@ namespace stocks
                 {
 
                     cmd.CommandText = "SELECT ticker, dateOfChange, stockPrice, userShares " +
-                        "FROM Stock.userStockHistory INNER JOIN Stock.stocks ON userStockHistory.stockID = stocks.stockIDticker " +
-                        "WHERE userid = @userID;
+                        "FROM userStockHistory INNER JOIN stocks ON userStockHistory.stockID = stocks.stockIDticker " +
+                        "WHERE userid = @userID";
 
                     cmd.Parameters.AddWithValue("@userID", GetUserId(username));
 
