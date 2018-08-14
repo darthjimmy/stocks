@@ -191,7 +191,7 @@ namespace stocks
                     {
                         while (reader.Read())
                         {
-                            history.Add(new (UserHistory)
+                            history.Add(new UserHistory()
                             {
                                 ticker = reader.GetString("ticker"),
                                 dateOfChange = reader.GetDateTime("dateOfChange"),
