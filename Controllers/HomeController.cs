@@ -88,6 +88,12 @@ namespace stocks.Controllers
         {
             return DBHelper.GetBalance(username);
         }
+        
+        [HttpPost]
+        public List<UserHistory> GetHistory(string username)
+        {
+            return DBHelper.HistoryR(username);
+        }
 
         [HttpPost]
         public string GetStocks(string username)
