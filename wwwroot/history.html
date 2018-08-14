@@ -37,32 +37,6 @@
                         window.location.href="index.html";   
                     }
                 });
-            $.ajax
-            ({
-                url: "/stocks",
-                type: "POST", 
-                dataType: 'html', 
-                data: { username: username }, 
-                success: function(result)
-                { 
-                    if (result == "false")
-                    {
-                        window.location.href="intro.html";
-                    }
-                    else
-                    {
-                        $.when(getStocks()).done(function(a1){
-                            drawCharts(_stocksData);
-                            updateTable(_stocksData);
-                        });
-                        
-                    }
-                },
-                error: function()
-                {
-                    window.location.href="index.html";   
-                }
-            });
             
             function back()
             {
