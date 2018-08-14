@@ -168,7 +168,7 @@ namespace stocks
             }
         }
         
-        public static bool PurchaseStock(string username, string ticker, int shares)
+        public static bool PurchaseStock(string username, string ticker, decimal shares)
         {
             int newShares = 0;
             long stockID = -1;
@@ -176,17 +176,17 @@ namespace stocks
             decimal difference = 0;
             decimal cost = StockPrice(ticker);
             decimal coster = cost;
-            int sharer = 0;
+            decimal sharer = 0;
             if (shares > 0)
             {
-                decimal balance = GetBalance(username);
+                // decimal balance = GetBalance(username);
                 
-                cost = cost * shares;
-                if (balance < cost)
-                {
-                    return false;
-                }
-                difference = balance - cost;
+                // cost = cost * shares;
+                // if (balance < cost)
+                // {
+                //     return false;
+                // }
+                // difference = balance - cost;
             }
 
             using (var conn = new MySqlConnection(connstring.ToString()))
@@ -196,12 +196,12 @@ namespace stocks
                 {
                     if (shares > 0)
                     {
-                        cmd.CommandText = "UPDATE user SET balance = @difference WHERE username = @username";
+                        // cmd.CommandText = "UPDATE user SET balance = @difference WHERE username = @username";
 
-                        cmd.Parameters.AddWithValue("@username", username);
-                        cmd.Parameters.AddWithValue("@difference", difference);
+                        // cmd.Parameters.AddWithValue("@username", username);
+                        // cmd.Parameters.AddWithValue("@difference", difference);
 
-                        cmd.ExecuteNonQuery();
+                        // cmd.ExecuteNonQuery();
                     }
                 
                     stockID = InsertStock(ticker);
@@ -224,7 +224,7 @@ namespace stocks
                         }
                     }
                     sharer = shares;
-                    shares = shares + newShares;
+                    //shares = shares + newShares;
 
                     if (userInvestmentsID == -1)
                     {
@@ -323,7 +323,7 @@ namespace stocks
             return true;
         }
         
-        public static bool History(int shares, long stockID, string username, decimal price)
+        public static bool History(decimal shares, long stockID, string username, decimal price)
         {
             using (var conn = new MySqlConnection(connstring.ToString()))
             {
@@ -331,7 +331,7 @@ namespace stocks
                 using (MySqlCommand cmd = conn.CreateCommand())
                 {
                     
-                    cmd.CommandText = "INSERT INTO userInvestments (userID, stockID, dateOfChange, stockPrice, userShares) " +
+                    cmd.CommandText = "INSERT INTO userStockHistory (userID, stockID, dateOfChange, stockPrice, userShares) " +
                         "VALUES (@userID, @stockID, @dater, @price, @shares)";
 
                     cmd.Parameters.AddWithValue("@userID", GetUserId(username));

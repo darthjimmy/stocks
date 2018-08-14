@@ -98,6 +98,11 @@ namespace stocks
                     template: "/refreshStockData",
                     defaults: new {Controller = "Home", action = "RefreshStockData" }
                 );
+                routes.MapRoute(
+                    name: "try_purchaseStocks",
+                    template: "/purchaseStocks",
+                    defaults: new {Controller = "Home", action = "PurchaseStock" }
+                );
             });
         }
     }

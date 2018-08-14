@@ -11,6 +11,9 @@
             var username = sessionStorage.getItem("username");
             var password = sessionStorage.getItem("password");
             var typer = "login";
+            var _stocksData = "";
+            var _pieChart;
+            var _barChart;
 
             //call backend to make sure this username and password exists. 
             //if (!backend()) 
@@ -49,13 +52,29 @@
                     }
                     else
                     {
-                        getStocks();
+                        $.when(getStocks()).done(function(a1){
+                            drawCharts(_stocksData);
+                            updateTable(_stocksData);
+                        });
+                        
                     }
                 },
                 error: function()
                 {
                     window.location.href="index.html";   
                 }
+            });
+
+            $("#amount1").focusout(function(evt){
+                updateShares(evt);
+            });
+
+            $("#amount2").focusout(function(evt){
+                updateShares(evt);
+            });
+
+            $("#amount3").focusout(function(evt){
+                updateShares(evt);
             });
             
             function getBalance()
@@ -103,7 +122,7 @@
 
                 var balance = curBalance.value;
 
-                switch(evt.target)
+                switch(evt)
                 {
                     case amount1:
                         var ratio1 = amt2 / balance;
@@ -136,18 +155,42 @@
                 amount1.value = amt1;
                 amount2.value = amt2;
                 amount3.value = amt3;
+
+                var shares1 = amt1 / price1.value;
+                var shares2 = amt2 / price2.value;
+                var shares3 = amt3 / price3.value;
+
+                $.when(updateStockShares(ticker1.value, shares1), updateStockShares(ticker2.value, shares2), updateStockShares(ticker3.value, shares3)).done(function(a1, a2, a3)
+                {
+                    getBalance();
+                    $.when(getStocks()).done(function(a1){
+                        drawCharts(_stocksData);
+                        updateTable(_stocksData); 
+                    });
+                    
+                });
             }
             
+            function updateStockShares(ticker, shares)
+            {
+                return $.ajax({
+                    url: "/purchaseStocks",
+                    type: "POST",
+                    dataType: 'html',
+                    data: { username: username, ticker: ticker, shares: shares}
+                });
+            }
+
             function getStocks()
             {
-                $.ajax({
+                return $.ajax({
                     url: "/getStocks",
                     type: "POST",
                     dataType: 'html',
                     data: { username: username },
                     success: function(result)
                     {
-                        drawCharts(result);
+                        _stocksData = result;
                     },
                     error: function()
                     {
@@ -158,14 +201,16 @@
 
             function updateStockPrices()
             {
-                $.ajax({
+                return $.ajax({
                     url: "/refreshStockData",
                     type: "POST",
                     dataType: 'html',
                     data: { username: username },
                     success: function()
                     {
-                        getStocks();
+                        $.when(getStocks()).done(function(a1){
+                            updateTable(_stocksData);
+                        });
                     },
                     error: function()
                     {
@@ -208,44 +253,75 @@
                     }
                 };
 
+                if (_pieChart != undefined)
+                {
+                    _pieChart.data = dataSet;
+                    _pieChart.update();
+                    return;
+                }
+
                 var ctx = document.getElementById("pieChartCanvas");
-                var pieChart = new Chart(ctx, {
+                _pieChart = new Chart(ctx, {
                     type: 'pie',
                     data: dataSet,
                     options: options
                 });
 
                 $("#pieChartCanvas").on('click', function(evt) {
-                    var activePoints = pieChart.getElementsAtEvent(evt);
+                    var activePoints = _pieChart.getElementsAtEvent(evt);
                     var firstPoint = activePoints[0];
                     if (firstPoint !== undefined) {
                         dataSet.datasets[firstPoint._datasetIndex].data[firstPoint._index] += parseFloat(incrementAmount.value);
-                        pieChart.update();
+                        _pieChart.update();
                     }
                 });
-                window.pieChartCanvas = pieChart;
 
+                window.pieChartCanvas = _pieChart;
+
+                if (_barChart != undefined)
+                {
+                    _barChart.data = dataSet;
+                    _barChart.update();
+                    return;
+                }
+
+                var barctx = document.getElementById("barChartCanvas");
+                _barChart = new Chart(barctx, {
+                    type: 'bar',
+                    data: dataSet,
+                    options: options
+                });
+
+                $("#barChartCanvas").on('click', function(evt) {
+                    var activePoints = _pieChart.getElementsAtEvent(evt);
+                    var firstPoint = activePoints[0];
+                    if (firstPoint !== undefined) {
+                        dataSet.datasets[firstPoint._dataSetIndex].data[firstPoint._index] += parseFloat(incrementAmount.value);
+                        _barChart.update();
+                    }
+                });
+
+                window.barChartCanvas = _barChart;
+            }
+
+            function updateTable(stocksData)
+            {
+                var data = JSON.parse(stocksData);
                 ticker1.value = data.Stocks[0].Ticker;
                 price1.value = data.Stocks[0].CostPerShare;
                 amount1.value = data.Stocks[0].Shares * data.Stocks[0].CostPerShare;
-                $("#amount1").focusout(function(evt){
-                    updateShares(evt);
-                });
 
                 ticker2.value = data.Stocks[1].Ticker;
                 price2.value = data.Stocks[1].CostPerShare;
                 amount2.value = data.Stocks[1].Shares * data.Stocks[1].CostPerShare;
-                $("#amount2").focusout(function(evt){
-                    updateShares(evt);
-                });
+
                 
                 ticker3.value = data.Stocks[2].Ticker;
                 price3.value = data.Stocks[2].CostPerShare;
                 amount3.value = data.Stocks[2].Shares * data.Stocks[2].CostPerShare;
-                $("#amount3").focusout(function(evt){
-                    updateShares(evt);
-                });
+
             }
+
         </script>
         <div align="top" id="banner"><p align="right"><input type="Submit" id="logout" name="logout" value="Logout" onclick=logout()></p></div>
         <div align="center"><p>Welcome! Please review your stock options.</p></div>
@@ -272,17 +348,17 @@
                 <tr>
                     <td><input type="text" id="ticker1" readonly></input></td>
                     <td><input type="text" id="price1" readonly></input></td>
-                    <td><input type="text" id="amount1"></input></td>
+                    <td><input type="text" id="amount1" onfocusout="updateShares(this)"></input></td>
                 </tr>
                 <tr>
                     <td><input type="text" id="ticker2" readonly></input></td>
                     <td><input type="text" id="price2" readonly></input></td>
-                    <td><input type="text" id="amount2"></input></td>
+                    <td><input type="text" id="amount2" onfocusout="updateShares(this)"></input></td>
                 </tr>
                 <tr>
                     <td><input type="text" id="ticker3" readonly></input></td>
                     <td><input type="text" id="price3" readonly></input></td>
-                    <td><input type="text" id="amount3"></input></td>
+                    <td><input type="text" id="amount3"onfocusout="updateShares(this)"></input></td>
                 </tr>
             </table>
         </div>
