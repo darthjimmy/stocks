@@ -66,7 +66,7 @@ namespace stocks.Controllers
         }
         
         [HttpPost]
-        public bool SellStock(string username, string ticker, int shares)
+        public bool SellStock(string username, string ticker, decimal shares)
         {
             return DBHelper.SellStock(username, ticker, shares);
         }

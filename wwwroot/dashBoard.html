@@ -64,18 +64,6 @@
                     window.location.href="index.html";   
                 }
             });
-
-            $("#amount1").focusout(function(evt){
-                updateShares(evt);
-            });
-
-            $("#amount2").focusout(function(evt){
-                updateShares(evt);
-            });
-
-            $("#amount3").focusout(function(evt){
-                updateShares(evt);
-            });
             
             function getBalance()
             {
@@ -119,19 +107,35 @@
                     });
             }
 
-            function updateShares(ticker, price, amt)
+            function updateShares(ticker, amt)
             {
-                var shares = amt / price;
-
-                $.when(updateStockShares(ticker, shares)).done(function(a1)
+                if (amt >= 0 )
+                    updateStockShares(ticker, amt)
+                else
                 {
-                    getBalance();
-                    $.when(getStocks()).done(function(a1){
-                        drawCharts(_stocksData);
-                        updateTable(_stocksData); 
-                    });
-                    
-                });
+                    sellStock(ticker, amt * -1);
+                    buy1.value = "";
+                    buy2.value = "";
+                    buy3.value = "";
+                }
+            }
+
+            function sellStock(ticker, amt)
+            {
+                return $.ajax({
+                    url: "/sellStock",
+                    type: "POST",
+                    dataType: 'html',
+                    data: {username: username, ticker: ticker, shares: amt },
+                    success: function(result)
+                    {
+                        getBalance();
+                        $.when(getStocks()).done(function(a1){
+                            drawCharts(_stocksData);
+                            updateTable(_stocksData);
+                        })
+                    }
+                })
             }
             
             function updateStockShares(ticker, shares)
@@ -140,7 +144,15 @@
                     url: "/purchaseStocks",
                     type: "POST",
                     dataType: 'html',
-                    data: { username: username, ticker: ticker, shares: shares}
+                    data: { username: username, ticker: ticker, shares: shares},
+                    success: function(result)
+                    {
+                        getBalance();
+                        $.when(getStocks()).done(function(a1){
+                            drawCharts(_stocksData);
+                            updateTable(_stocksData);
+                        });
+                    }
                 });
             }
 
@@ -194,7 +206,7 @@
                 var data = JSON.parse(stocksData);
                 var stockNames = [data.Stocks[0].Ticker, data.Stocks[1].Ticker, data.Stocks[2].Ticker];
                 var prices = [data.Stocks[0].CostPerShare, data.Stocks[1].CostPerShare, data.Stocks[2].CostPerShare];
-                var stockShares = [data.Stocks[0].Shares * data.Stocks[0].CostPerShare, data.Stocks[1].Shares * data.Stocks[1].CostPerShare, data.Stocks[2].Shares * data.Stocks[2].CostPerShare];
+                var stockShares = [data.Stocks[0].Shares, data.Stocks[1].Shares, data.Stocks[2].Shares];
 
                 var dataSet = {
                     datasets: [{
@@ -244,9 +256,15 @@
                     if (firstPoint !== undefined) {
                         var ticker = dataSet.labels[firstPoint._datasetIndex];
                         var price = prices[firstPoint._datasetIndex];
-                        var shares = dataSet.datasets[firstPoint._datasetIndex].data[firstPoint._index] + parseFloat(incrementAmount.value);
+                        var shares = parseFloat(incrementAmount.value);
 
-                        updateShares(ticker, price, shares);
+                        if (shares >= 0)                        
+                            updateStockShares(ticker, shares);
+                        else
+                        {
+                            sellStock(ticker, shares * -1);
+                        }
+
                         //_pieChart.update();
                     }
                 });
@@ -266,9 +284,12 @@
                     if (firstPoint !== undefined) {
                         var ticker = dataSet.labels[firstPoint._datasetIndex];
                         var price = prices[firstPoint._datasetIndex];
-                        var shares = dataSet.datasets[firstPoint._datasetIndex].data[firstPoint._index] + parseFloat(incrementAmount.value);
+                        var shares = parseFloat(incrementAmount.value);
 
-                        updateShares(ticker, price, shares);
+                        if (shares >= 0)                        
+                            updateStockShares(ticker, shares);
+                        else
+                            sellStock(ticker, shares * -1);
                         //_barChart.update();
                     }
                 });
@@ -281,16 +302,16 @@
                 var data = JSON.parse(stocksData);
                 ticker1.value = data.Stocks[0].Ticker;
                 price1.value = data.Stocks[0].CostPerShare;
-                amount1.value = data.Stocks[0].Shares * data.Stocks[0].CostPerShare;
+                amount1.value = data.Stocks[0].Shares;
 
                 ticker2.value = data.Stocks[1].Ticker;
                 price2.value = data.Stocks[1].CostPerShare;
-                amount2.value = data.Stocks[1].Shares * data.Stocks[1].CostPerShare;
+                amount2.value = data.Stocks[1].Shares;
 
                 
                 ticker3.value = data.Stocks[2].Ticker;
                 price3.value = data.Stocks[2].CostPerShare;
-                amount3.value = data.Stocks[2].Shares * data.Stocks[2].CostPerShare;
+                amount3.value = data.Stocks[2].Shares;
 
             }
 
@@ -307,7 +328,7 @@
         <div align="right">
             <p><label>Stock ticker to sell</label><input type="text" id="sellStockerT"></p>
             <p><label>Amount of stock ticker to sell</label><input type="text" id="sellStockerA"></p>
-            <p><input type="Submit" value="Submit"></p>
+            <p><input type="button" value="Submit" onclick="sellStock(sellStockerT.value, sellStockerA.value)"></p>
         </div>
         <div align="right">
             <input type="Submit" value="History" onclick=goHistory()>
@@ -318,22 +339,26 @@
                 <tr>
                     <th>Stock Ticker</th>
                     <th>Stock Price</th>
-                    <th>Amount Invested</th>
+                    <th>Shares owned</th>
+                    <th>Buy/Sell</th>
                 </tr>
                 <tr>
                     <td><input type="text" id="ticker1" readonly></input></td>
                     <td><input type="text" id="price1" readonly></input></td>
-                    <td><input type="text" id="amount1" onfocusout="updateShares(ticker1.value, price1.value, this.value)"></input></td>
+                    <td><input type="text" id="amount1" readonly></input></td>
+                    <td><input type="text" id="buy1" onfocusout="updateShares(ticker1.value, this.value)"></input></td>
                 </tr>
                 <tr>
                     <td><input type="text" id="ticker2" readonly></input></td>
                     <td><input type="text" id="price2" readonly></input></td>
-                    <td><input type="text" id="amount2" onfocusout="updateShares(ticker2.value, price2.value, this.value)"></input></td>
+                    <td><input type="text" id="amount2" readonly></input></td>
+                    <td><input type="text" id="buy2" onfocusout="updateShares(ticker2.value, this.value)"></input></td>
                 </tr>
                 <tr>
                     <td><input type="text" id="ticker3" readonly></input></td>
                     <td><input type="text" id="price3" readonly></input></td>
-                    <td><input type="text" id="amount3"onfocusout="updateShares(ticker3.value, price3.value, this.value)"></input></td>
+                    <td><input type="text" id="amount3" readonly></input></td>
+                    <td><input type="text" id="buy3" onfocusout="updateShares(ticker3.value, this.value)"></input></td>
                 </tr>
             </table>
         </div>

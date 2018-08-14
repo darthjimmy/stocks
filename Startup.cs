@@ -108,8 +108,11 @@ namespace stocks
                     template: "/history",
                     defaults: new {Controller = "Home", action = "GetHistory" }
                 );
-                
-                
+                routes.MapRoute(
+                    name: "try_sellStock",
+                    template: "/sellStock",
+                    defaults: new {Controller = "Home", action = "SellStock" }
+                );
             });
         }
     }

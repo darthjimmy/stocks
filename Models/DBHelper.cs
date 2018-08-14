@@ -182,7 +182,7 @@ namespace stocks
                 {
 
                     cmd.CommandText = "SELECT ticker, dateOfChange, stockPrice, userShares " +
-                        "FROM userStockHistory INNER JOIN stocks ON userStockHistory.stockID = stocks.stockIDticker " +
+                        "FROM userStockHistory INNER JOIN stocks ON userStockHistory.stockID = stocks.stockID " +
                         "WHERE userid = @userID";
 
                     cmd.Parameters.AddWithValue("@userID", GetUserId(username));
@@ -209,23 +209,27 @@ namespace stocks
         
         public static bool PurchaseStock(string username, string ticker, decimal shares)
         {
-            int newShares = 0;
+            decimal newShares = 0;
             long stockID = -1;
             int userInvestmentsID = -1;
             decimal difference = 0;
             decimal cost = StockPrice(ticker);
             decimal coster = cost;
-            decimal sharer = 0;
+            decimal sharer = shares;
             if (shares > 0)
             {
                 decimal balance = GetBalance(username);
                 
                 cost = cost * shares;
+                if (balance < 0)
+                    return false;
+
                 if (balance < cost)
                 {
-                    return false;
+                    cost = balance;
                 }
                 difference = balance - cost;
+                shares = (cost / coster);
             }
 
             using (var conn = new MySqlConnection(connstring.ToString()))
@@ -259,7 +263,7 @@ namespace stocks
                         while (reader.Read())
                         {
                             userInvestmentsID = reader.GetInt32("userInvestmentsID");
-                            newShares = reader.GetInt32("shares");
+                            newShares = reader.GetDecimal("shares");
                         }
                     }
                     sharer = shares;
@@ -286,16 +290,16 @@ namespace stocks
             return false;
         }
         
-        public static bool SellStock(string username, string ticker, int shares)
+        public static bool SellStock(string username, string ticker, decimal shares)
         {
             using (var conn = new MySqlConnection(connstring.ToString()))
             {
                 shares = shares * (-1);
                 int stockID = -1;
-                decimal pricer = 0;
-                int sharer = 0;
-                decimal price = 0;
-                int oldShares = 0;
+                decimal pricer = 0.0m;
+                decimal sharer = 0.0m;
+                decimal price = 0.0m;
+                decimal oldShares = 0.0m;
                 int userInvestmentsID = -1;
                 conn.Open();
                 using (MySqlCommand cmd = conn.CreateCommand())
@@ -320,17 +324,17 @@ namespace stocks
                         while (reader.Read())
                         {
                             userInvestmentsID = reader.GetInt32("userInvestmentsID");
-                            oldShares = reader.GetInt32("shares");
+                            oldShares = reader.GetDecimal("shares");
                         }
                     }
                     
-                    if (oldShares < shares)
+                    if (oldShares < (shares * -1))
                     {
-                        return false;
+                        shares = oldShares;
                     }
                     price = StockPrice(ticker);
                     pricer = price;
-                    price = price * shares;
+                    price = price * (shares * -1);
                     sharer = shares;
                     shares = oldShares + shares;
                     
