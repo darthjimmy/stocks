@@ -168,6 +168,45 @@ namespace stocks
             }
         }
         
+        public static List<UserHistory> HistoryR(string username)
+        {
+            decimal stockPrice = 0;
+            string ticker = "";
+            int userShares = 0;
+            DateTime dateOfChange = "";
+            List<UserHistory> history = new List<UserHistory>;
+            using (var conn = new MySqlConnection(connstring.ToString()))
+            {
+                conn.Open();
+                using (MySqlCommand cmd = conn.CreateCommand())
+                {
+
+                    cmd.CommandText = "SELECT ticker, dateOfChange, stockPrice, userShares " +
+                        "FROM Stock.userStockHistory INNER JOIN Stock.stocks ON userStockHistory.stockID = stocks.stockIDticker " +
+                        "WHERE userid = @userID;
+
+                    cmd.Parameters.AddWithValue("@userID", GetUserId(username));
+
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            history.Add(new (UserHistory)
+                            {
+                                ticker = reader.GetString("ticker"),
+                                dateOfChange = reader.GetDateTime("dateOfChange"),
+                                stockPrice = reader.GetDecimal("stockPrice"),
+                                userShares = reader.GetInt32("userShares"),
+                            });
+                        }
+                    }
+
+                    return history;
+
+                }
+            }
+        }
+        
         public static bool PurchaseStock(string username, string ticker, decimal shares)
         {
             int newShares = 0;
