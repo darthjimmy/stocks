@@ -94,6 +94,11 @@
                         }
                     });
             }
+            
+            function goHistory()
+            {
+               window.location.href="history.html";  
+            }
 
             function addBalance()
             {
@@ -303,6 +308,9 @@
             <p><label>Stock ticker to sell</label><input type="text" id="sellStockerT"></p>
             <p><label>Amount of stock ticker to sell</label><input type="text" id="sellStockerA"></p>
             <p><input type="Submit" value="Submit"></p>
+        </div>
+        <div align="right">
+            <input type="Submit" value="History" onclick=goHistory()>
         </div>
         
         <div align="center" id="table">
