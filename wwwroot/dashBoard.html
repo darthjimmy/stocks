@@ -254,8 +254,8 @@
                     var activePoints = _pieChart.getElementsAtEvent(evt);
                     var firstPoint = activePoints[0];
                     if (firstPoint !== undefined) {
-                        var ticker = dataSet.labels[firstPoint._datasetIndex];
-                        var price = prices[firstPoint._datasetIndex];
+                        var ticker = dataSet.labels[firstPoint._index];
+                        var price = prices[firstPoint._index];
                         var shares = parseFloat(incrementAmount.value);
 
                         if (shares >= 0)                        
@@ -282,8 +282,8 @@
                     var activePoints = _barChart.getElementsAtEvent(evt);
                     var firstPoint = activePoints[0];
                     if (firstPoint !== undefined) {
-                        var ticker = dataSet.labels[firstPoint._datasetIndex];
-                        var price = prices[firstPoint._datasetIndex];
+                        var ticker = dataSet.labels[firstPoint._index];
+                        var price = prices[firstPoint._index];
                         var shares = parseFloat(incrementAmount.value);
 
                         if (shares >= 0)                        
