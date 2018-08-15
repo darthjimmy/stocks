@@ -326,7 +326,7 @@ namespace stocks
                     
                     if (oldShares < (shares * -1))
                     {
-                        shares = oldShares;
+                        shares = oldShares * -1;
                     }
                     price = StockPrice(ticker);
                     pricer = price;
