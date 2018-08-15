@@ -183,7 +183,7 @@ namespace stocks
 
                     cmd.CommandText = "SELECT ticker, dateOfChange, stockPrice, userShares " +
                         "FROM userStockHistory INNER JOIN stocks ON userStockHistory.stockID = stocks.stockID " +
-                        "WHERE userid = @userID";
+                        "WHERE userid = @userID ORDER BY dateOfChange";
 
                     cmd.Parameters.AddWithValue("@userID", GetUserId(username));
 
