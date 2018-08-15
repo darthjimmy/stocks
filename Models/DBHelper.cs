@@ -170,10 +170,6 @@ namespace stocks
         
         public static List<UserHistory> HistoryR(string username)
         {
-            decimal stockPrice = 0;
-            string ticker = "";
-            double userShares = 0;
-            DateTime dateOfChange;
             List<UserHistory> history = new List<UserHistory>();
             using (var conn = new MySqlConnection(connstring.ToString()))
             {
@@ -183,7 +179,7 @@ namespace stocks
 
                     cmd.CommandText = "SELECT ticker, dateOfChange, stockPrice, userShares " +
                         "FROM userStockHistory INNER JOIN stocks ON userStockHistory.stockID = stocks.stockID " +
-                        "WHERE userid = @userID ORDER BY dateOfChange";
+                        "WHERE userid = @userID ORDER BY dateOfChange DESC";
 
                     cmd.Parameters.AddWithValue("@userID", GetUserId(username));
 
