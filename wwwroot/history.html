@@ -66,19 +66,13 @@
                          r[++j] = '</td></tr>';
                      }
                     $('#dataTable').append(r.join(''));
-                    drawCharts(dataSet);
+                    //drawCharts(dataSet);
                 },
                 error: function()
                 {
                     alert("Failure to load history");   
                 }
             });
-            
-            function drawCharts(dataSet)
-            {
-                var tickers = dataSet.filter(function(item,i, ar){ return ar.indexOf(item) === i; });
-
-            }
             
         </script>
         <div align="center"><p>Please review your history</p></div>
